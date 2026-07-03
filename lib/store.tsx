@@ -50,7 +50,17 @@ export type Order = {
 export type Account = {
   name: string
   email: string
+  org?: string
+  phone?: string
 } | null
+
+export type CoaDownload = {
+  slug: string
+  catNo: string
+  name: string
+  spec: string
+  downloadedAt: number
+}
 
 type StoreState = {
   hydrated: boolean
@@ -74,6 +84,21 @@ type StoreState = {
   account: Account
   signIn: (name: string, email: string) => void
   signOut: () => void
+  updateAccount: (patch: Partial<NonNullable<Account>>) => void
+  // favorites (wishlist)
+  favorites: string[]
+  toggleFavorite: (slug: string) => void
+  isFavorite: (slug: string) => boolean
+  // saved for later
+  saved: string[]
+  toggleSaved: (slug: string) => void
+  isSaved: (slug: string) => boolean
+  // recently viewed
+  recentlyViewed: string[]
+  trackView: (slug: string) => void
+  // COA downloads
+  coaDownloads: CoaDownload[]
+  logCoaDownload: (d: Omit<CoaDownload, 'downloadedAt'>) => void
 }
 
 const StoreContext = createContext<StoreState | null>(null)
@@ -83,6 +108,10 @@ const KEYS = {
   age: 'tru.age',
   orders: 'tru.orders',
   account: 'tru.account',
+  favorites: 'tru.favorites',
+  saved: 'tru.saved',
+  recentlyViewed: 'tru.recentlyViewed',
+  coaDownloads: 'tru.coaDownloads',
 }
 
 function load<T>(key: string, fallback: T): T {
@@ -110,6 +139,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [ageVerified, setAgeVerified] = useState(true) // avoid SSR flash; corrected on hydrate
   const [orders, setOrders] = useState<Order[]>([])
   const [account, setAccount] = useState<Account>(null)
+  const [favorites, setFavorites] = useState<string[]>([])
+  const [saved, setSaved] = useState<string[]>([])
+  const [recentlyViewed, setRecentlyViewed] = useState<string[]>([])
+  const [coaDownloads, setCoaDownloads] = useState<CoaDownload[]>([])
 
   // Hydrate from localStorage on mount
   useEffect(() => {
@@ -117,6 +150,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setAgeVerified(load<boolean>(KEYS.age, false))
     setOrders(load<Order[]>(KEYS.orders, []))
     setAccount(load<Account>(KEYS.account, null))
+    setFavorites(load<string[]>(KEYS.favorites, []))
+    setSaved(load<string[]>(KEYS.saved, []))
+    setRecentlyViewed(load<string[]>(KEYS.recentlyViewed, []))
+    setCoaDownloads(load<CoaDownload[]>(KEYS.coaDownloads, []))
     setHydrated(true)
   }, [])
 
@@ -130,6 +167,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (hydrated) save(KEYS.account, account)
   }, [account, hydrated])
+  useEffect(() => {
+    if (hydrated) save(KEYS.favorites, favorites)
+  }, [favorites, hydrated])
+  useEffect(() => {
+    if (hydrated) save(KEYS.saved, saved)
+  }, [saved, hydrated])
+  useEffect(() => {
+    if (hydrated) save(KEYS.recentlyViewed, recentlyViewed)
+  }, [recentlyViewed, hydrated])
+  useEffect(() => {
+    if (hydrated) save(KEYS.coaDownloads, coaDownloads)
+  }, [coaDownloads, hydrated])
 
   const addItem = useCallback((item: Omit<CartItem, 'id'>) => {
     const id = `${item.productSlug}:${item.catNo}`
@@ -176,10 +225,39 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   )
 
   const signIn = useCallback((name: string, email: string) => {
-    setAccount({ name, email })
+    setAccount((prev) => ({ ...prev, name, email }))
   }, [])
 
   const signOut = useCallback(() => setAccount(null), [])
+
+  const updateAccount = useCallback((patch: Partial<NonNullable<Account>>) => {
+    setAccount((prev) => (prev ? { ...prev, ...patch } : prev))
+  }, [])
+
+  const toggleFavorite = useCallback((slug: string) => {
+    setFavorites((prev) =>
+      prev.includes(slug) ? prev.filter((s) => s !== slug) : [slug, ...prev],
+    )
+  }, [])
+  const isFavorite = useCallback((slug: string) => favorites.includes(slug), [favorites])
+
+  const toggleSaved = useCallback((slug: string) => {
+    setSaved((prev) =>
+      prev.includes(slug) ? prev.filter((s) => s !== slug) : [slug, ...prev],
+    )
+  }, [])
+  const isSaved = useCallback((slug: string) => saved.includes(slug), [saved])
+
+  const trackView = useCallback((slug: string) => {
+    setRecentlyViewed((prev) => [slug, ...prev.filter((s) => s !== slug)].slice(0, 12))
+  }, [])
+
+  const logCoaDownload = useCallback((d: Omit<CoaDownload, 'downloadedAt'>) => {
+    setCoaDownloads((prev) => {
+      const filtered = prev.filter((x) => !(x.slug === d.slug && x.catNo === d.catNo))
+      return [{ ...d, downloadedAt: Date.now() }, ...filtered].slice(0, 50)
+    })
+  }, [])
 
   const count = useMemo(() => items.reduce((n, i) => n + i.qty, 0), [items])
   const subtotal = useMemo(
@@ -205,6 +283,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     account,
     signIn,
     signOut,
+    updateAccount,
+    favorites,
+    toggleFavorite,
+    isFavorite,
+    saved,
+    toggleSaved,
+    isSaved,
+    recentlyViewed,
+    trackView,
+    coaDownloads,
+    logCoaDownload,
   }
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>

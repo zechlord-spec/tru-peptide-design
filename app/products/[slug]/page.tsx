@@ -15,12 +15,14 @@ import {
   Target,
   Layers,
   ShieldCheck,
-  Download,
 } from 'lucide-react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { FaqAccordion } from '@/components/systems/faq-accordion'
 import { AddToCart } from '@/components/products/add-to-cart'
+import { FavoriteButton } from '@/components/shop/favorite-button'
+import { ViewTracker } from '@/components/shop/view-tracker'
+import { CoaDownloadButton } from '@/components/shop/coa-download-button'
 import { PRODUCTS, getProduct, getRelatedProducts, priceRange } from '@/lib/products-data'
 import {
   getTypeContent,
@@ -73,6 +75,7 @@ export default async function ProductPage({
 
   return (
     <main className="min-h-screen bg-background">
+      <ViewTracker slug={product.slug} />
       <SiteHeader />
 
       {/* Hero */}
@@ -103,11 +106,14 @@ export default async function ProductPage({
                   <FlaskConical className="h-3.5 w-3.5" aria-hidden="true" />
                   Research Only
                 </span>
-                {product.isNew && (
-                  <span className="absolute right-4 top-4 rounded-full bg-accent px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-accent-foreground">
-                    New
-                  </span>
-                )}
+                <div className="absolute right-4 top-4 flex items-center gap-2">
+                  {product.isNew && (
+                    <span className="rounded-full bg-accent px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-accent-foreground">
+                      New
+                    </span>
+                  )}
+                  <FavoriteButton slug={product.slug} />
+                </div>
               </div>
             </div>
 
@@ -320,13 +326,11 @@ export default async function ProductPage({
               </div>
             </div>
             <div className="flex w-full flex-col gap-3 md:w-auto">
-              <a
-                href="#"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-transform duration-300 hover:scale-[1.02]"
-              >
-                <Download className="h-4 w-4" />
-                Download COA
-              </a>
+              <CoaDownloadButton
+                slug={product.slug}
+                name={product.name}
+                variant={{ catNo: product.variants[0].catNo, spec: product.variants[0].spec }}
+              />
               <a
                 href="#"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-7 py-3.5 text-sm font-semibold text-primary transition-colors hover:bg-secondary"

@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FlaskConical, FileText, Eye, ArrowUpRight } from 'lucide-react'
 import { type Product, priceRange } from '@/lib/products-data'
+import { FavoriteButton } from '@/components/shop/favorite-button'
 
 type ProductCardProps = {
   product: Product
@@ -29,11 +30,14 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
           Research Only
         </span>
 
-        {product.isNew && (
-          <span className="absolute right-3 top-3 rounded-full bg-accent px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-foreground">
-            New
-          </span>
-        )}
+        <div className="absolute right-3 top-3 flex items-center gap-2">
+          {product.isNew && (
+            <span className="rounded-full bg-accent px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-foreground">
+              New
+            </span>
+          )}
+          <FavoriteButton slug={product.slug} size="sm" />
+        </div>
 
         {/* Quick View overlay button */}
         <div className="absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-center bg-gradient-to-t from-primary/80 to-transparent p-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">

@@ -1,10 +1,11 @@
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
-import { Account } from '@/components/shop/account'
+import { Dashboard } from '@/components/shop/dashboard'
 
 export const metadata = {
-  title: 'Account — TRU PEPTIDE',
-  description: 'Manage your account and view your order history.',
+  title: 'Dashboard — TRU PEPTIDE',
+  description:
+    'Manage your orders, saved products, COA downloads, favorites, recently viewed compounds, and account settings.',
 }
 
 export default function AccountPage() {
@@ -12,7 +13,7 @@ export default function AccountPage() {
     <>
       <SiteHeader />
       <main className="min-h-screen bg-background pt-24">
-        <Account />
+        <Dashboard />
       </main>
       <SiteFooter />
     </>
