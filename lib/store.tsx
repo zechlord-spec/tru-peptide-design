@@ -12,16 +12,23 @@ import {
 
 /* ----------------------------- Types ----------------------------- */
 
+export type PurchaseType = 'onetime' | 'autoship'
+
 export type CartItem = {
-  id: string // `${productSlug}:${catNo}`
+  id: string // `${productSlug}:${catNo}:${purchaseType}:${frequency}`
   productSlug: string
   name: string
   catNo: string
   spec: string
-  price: number
+  price: number // unit price already reflects AutoShip discount when applicable
   image: string
   qty: number
+  purchaseType?: PurchaseType
+  frequency?: number | null // delivery cadence in days (AutoShip only)
 }
+
+// AutoShip recurring-delivery discount (not a membership)
+export const AUTOSHIP_DISCOUNT = 0.15
 
 export type Address = {
   fullName: string
@@ -181,7 +188,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [coaDownloads, hydrated])
 
   const addItem = useCallback((item: Omit<CartItem, 'id'>) => {
-    const id = `${item.productSlug}:${item.catNo}`
+    const type = item.purchaseType ?? 'onetime'
+    const id = `${item.productSlug}:${item.catNo}:${type}:${item.frequency ?? 0}`
     setItems((prev) => {
       const existing = prev.find((i) => i.id === id)
       if (existing) {

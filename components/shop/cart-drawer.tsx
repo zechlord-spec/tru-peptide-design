@@ -3,8 +3,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect } from 'react'
-import { X, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
+import { X, Minus, Plus, ShoppingBag, Trash2, Repeat } from 'lucide-react'
 import { useStore, money } from '@/lib/store'
+
+function nextShipment(days: number): string {
+  const d = new Date()
+  d.setDate(d.getDate() + days)
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
 
 export function CartDrawer() {
   const { cartOpen, setCartOpen, items, updateQty, removeItem, subtotal, count } = useStore()
@@ -108,6 +114,23 @@ export function CartDrawer() {
                           {item.name}
                         </Link>
                         <p className="mt-0.5 text-xs text-muted-foreground">{item.spec}</p>
+                        {item.purchaseType === 'autoship' ? (
+                          <span className="mt-1.5 inline-flex flex-col gap-0.5">
+                            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                              <Repeat className="h-3 w-3" />
+                              TRU AutoShip
+                            </span>
+                            {item.frequency ? (
+                              <span className="text-[11px] text-muted-foreground">
+                                Every {item.frequency} days · next ~ {nextShipment(item.frequency)}
+                              </span>
+                            ) : null}
+                          </span>
+                        ) : (
+                          <span className="mt-1.5 inline-flex w-fit items-center rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                            One-Time
+                          </span>
+                        )}
                       </div>
                       <span className="whitespace-nowrap font-heading text-sm font-semibold text-primary">
                         {money(item.price * item.qty)}
@@ -158,6 +181,9 @@ export function CartDrawer() {
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 Shipping &amp; tax calculated at checkout.
+              </p>
+              <p className="mt-2 rounded-lg bg-secondary/60 px-3 py-2 text-[11px] leading-relaxed text-muted-foreground">
+                For laboratory and research use only. Not for human consumption.
               </p>
               <Link
                 href="/checkout"

@@ -19,7 +19,7 @@ import {
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { FaqAccordion } from '@/components/systems/faq-accordion'
-import { AddToCart } from '@/components/products/add-to-cart'
+import { PurchasePanel } from '@/components/products/purchase-panel'
 import { FavoriteButton } from '@/components/shop/favorite-button'
 import { ViewTracker } from '@/components/shop/view-tracker'
 import { CoaDownloadButton } from '@/components/shop/coa-download-button'
@@ -74,7 +74,7 @@ export default async function ProductPage({
     .filter((g): g is NonNullable<typeof g> => Boolean(g))
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background pb-24 lg:pb-0">
       <ViewTracker slug={product.slug} />
       <SiteHeader />
 
@@ -90,9 +90,9 @@ export default async function ProductPage({
             <span className="text-foreground">{product.name}</span>
           </nav>
 
-          <div className="mt-8 grid items-start gap-10 lg:grid-cols-2">
-            {/* Hero image */}
-            <div className="relative lg:sticky lg:top-28">
+          <div className="mt-8 grid items-start gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+            {/* Left: gallery + product information */}
+            <div>
               <div className="relative aspect-square overflow-hidden rounded-[2rem] border border-border/60 bg-secondary shadow-[0_40px_80px_-40px_rgba(8,27,53,0.4)]">
                 <Image
                   src={product.image || '/placeholder.svg'}
@@ -115,27 +115,53 @@ export default async function ProductPage({
                   <FavoriteButton slug={product.slug} />
                 </div>
               </div>
-            </div>
 
-            {/* Hero content + Add to cart */}
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-accent">
-                {product.category} • {product.compoundType}
-              </span>
-              <h1 className="mt-5 text-balance font-heading text-4xl font-bold text-primary md:text-5xl">
-                {product.name}
-              </h1>
-              <p className="mt-4 text-pretty text-lg leading-relaxed text-muted-foreground">
-                {product.blurb}
-              </p>
+              <div className="mt-8">
+                <span className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-accent">
+                  {product.category} • {product.compoundType}
+                </span>
+                <h1 className="mt-5 text-balance font-heading text-4xl font-bold text-primary md:text-5xl">
+                  {product.name}
+                </h1>
+                <p className="mt-4 text-pretty text-lg leading-relaxed text-muted-foreground">
+                  {product.blurb}
+                </p>
+              </div>
 
-              <div className="mt-5 flex flex-wrap items-center gap-3">
-                <span className="font-heading text-2xl font-bold text-primary">{priceRange(product)}</span>
-                <span className="text-sm text-muted-foreground">per box • {product.variants.length} option{product.variants.length > 1 ? 's' : ''}</span>
+              {/* Key specifications */}
+              <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border/60 bg-border/60 sm:grid-cols-4">
+                {[
+                  { label: 'Category', value: product.category },
+                  { label: 'Compound Type', value: product.compoundType },
+                  { label: 'Purity', value: '≥ 99% HPLC' },
+                  { label: 'Options', value: `${product.variants.length} spec${product.variants.length > 1 ? 's' : ''}` },
+                ].map((spec) => (
+                  <div key={spec.label} className="bg-card px-4 py-4">
+                    <dt className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      {spec.label}
+                    </dt>
+                    <dd className="mt-1 text-sm font-semibold text-primary">{spec.value}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              {/* COA + batch verification */}
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <a
+                  href="#coa"
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-secondary"
+                >
+                  <FileCheck2 className="h-4 w-4 text-accent" />
+                  Certificate of Analysis
+                </a>
+                <span className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2.5 text-sm font-medium text-primary">
+                  <ShieldCheck className="h-4 w-4 text-accent" />
+                  Batch verified
+                </span>
               </div>
 
               {(product.goals.length > 0 || product.systems.length > 0) && (
-                <div className="mt-5 flex flex-wrap gap-2">
+                <div className="mt-6 flex flex-wrap gap-2">
                   {product.goals.map((goal) => (
                     <span key={goal} className="rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground">
                       {goal}
@@ -148,11 +174,10 @@ export default async function ProductPage({
                   ))}
                 </div>
               )}
-
-              <div className="mt-8">
-                <AddToCart product={product} />
-              </div>
             </div>
+
+            {/* Right: premium purchase card */}
+            <PurchasePanel product={product} />
           </div>
         </div>
       </section>
