@@ -113,7 +113,7 @@ const STATUS_STYLES: Record<string, string> = {
   Draft: 'bg-muted text-muted-foreground',
   Scheduled: 'bg-sky-500/12 text-sky-700',
   Expired: 'bg-destructive/12 text-destructive',
-  VIP: 'bg-accent/20 text-accent-foreground',
+  Top: 'bg-accent/20 text-accent-foreground',
   Returning: 'bg-sky-500/12 text-sky-700',
   New: 'bg-secondary text-secondary-foreground',
   Active: 'bg-emerald-500/12 text-emerald-700',

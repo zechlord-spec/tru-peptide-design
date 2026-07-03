@@ -99,7 +99,7 @@ export type AdminCustomer = {
   orders: number
   spent: number
   joined: string
-  tier: 'New' | 'Returning' | 'VIP'
+  tier: 'New' | 'Returning' | 'Top'
 }
 
 export const CUSTOMERS: AdminCustomer[] = (() => {
@@ -126,7 +126,7 @@ export const CUSTOMERS: AdminCustomer[] = (() => {
   return Array.from(map.values())
     .map((c) => ({
       ...c,
-      tier: c.spent > 1500 ? 'VIP' : c.orders > 1 ? 'Returning' : 'New',
+      tier: c.spent > 1500 ? 'Top' : c.orders > 1 ? 'Returning' : 'New',
     }))
     .sort((a, b) => b.spent - a.spent)
 })()

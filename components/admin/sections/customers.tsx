@@ -15,7 +15,7 @@ import {
   EmptyState,
 } from '@/components/admin/ui'
 
-const FILTERS = ['All', 'VIP', 'Returning', 'New'] as const
+const FILTERS = ['All', 'Top', 'Returning', 'New'] as const
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
@@ -43,19 +43,19 @@ export function CustomersSection() {
     })
   }, [search, filter])
 
-  const vip = CUSTOMERS.filter((c) => c.tier === 'VIP').length
+  const topTier = CUSTOMERS.filter((c) => c.tier === 'Top').length
   const returning = CUSTOMERS.filter((c) => c.tier === 'Returning').length
 
   return (
     <div className="space-y-6">
       <SectionHeader
         title="Customers"
-        description="Understand your buyer base, lifetime value, and loyalty tiers."
+        description="Understand your buyer base, lifetime value, and spending tiers."
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard label="Total customers" value={CUSTOMERS.length} icon={Users} />
-        <StatCard label="VIP tier" value={vip} icon={Crown} />
+        <StatCard label="Top tier" value={topTier} icon={Crown} />
         <StatCard label="Returning" value={returning} icon={Repeat} />
       </div>
 
