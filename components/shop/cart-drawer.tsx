@@ -1,0 +1,182 @@
+'use client'
+
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect } from 'react'
+import { X, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
+import { useStore, money } from '@/lib/store'
+
+export function CartDrawer() {
+  const { cartOpen, setCartOpen, items, updateQty, removeItem, subtotal, count } = useStore()
+
+  // Lock body scroll when open
+  useEffect(() => {
+    if (cartOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [cartOpen])
+
+  // Close on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setCartOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [setCartOpen])
+
+  return (
+    <>
+      {/* Overlay */}
+      <div
+        aria-hidden={!cartOpen}
+        onClick={() => setCartOpen(false)}
+        className={`fixed inset-0 z-[60] bg-primary/30 backdrop-blur-sm transition-opacity duration-300 ${
+          cartOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+      />
+
+      {/* Panel */}
+      <aside
+        role="dialog"
+        aria-modal="true"
+        aria-label="Shopping bag"
+        className={`fixed inset-y-0 right-0 z-[70] flex w-full max-w-md flex-col bg-card shadow-2xl transition-transform duration-300 ease-out ${
+          cartOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="flex items-center justify-between border-b border-border px-6 py-5">
+          <h2 className="font-heading text-lg font-semibold text-foreground">
+            Your Bag {count > 0 && <span className="text-muted-foreground">({count})</span>}
+          </h2>
+          <button
+            type="button"
+            onClick={() => setCartOpen(false)}
+            className="flex h-9 w-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-secondary"
+            aria-label="Close bag"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {items.length === 0 ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary">
+              <ShoppingBag className="h-7 w-7 text-muted-foreground" />
+            </div>
+            <div>
+              <p className="font-heading text-lg font-semibold text-foreground">Your bag is empty</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Explore our research compounds to get started.
+              </p>
+            </div>
+            <Link
+              href="/products"
+              onClick={() => setCartOpen(false)}
+              className="mt-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Browse Compounds
+            </Link>
+          </div>
+        ) : (
+          <>
+            <ul className="flex-1 divide-y divide-border overflow-y-auto px-6">
+              {items.map((item) => (
+                <li key={item.id} className="flex gap-4 py-5">
+                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-secondary">
+                    <Image
+                      src={item.image || '/catalog/vial-metabolic.png'}
+                      alt={item.name}
+                      fill
+                      sizes="80px"
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <Link
+                          href={`/products/${item.productSlug}`}
+                          onClick={() => setCartOpen(false)}
+                          className="font-heading text-sm font-semibold leading-tight text-foreground hover:text-primary"
+                        >
+                          {item.name}
+                        </Link>
+                        <p className="mt-0.5 text-xs text-muted-foreground">{item.spec}</p>
+                      </div>
+                      <span className="whitespace-nowrap font-heading text-sm font-semibold text-primary">
+                        {money(item.price * item.qty)}
+                      </span>
+                    </div>
+
+                    <div className="mt-auto flex items-center justify-between pt-3">
+                      <div className="flex items-center rounded-full border border-border">
+                        <button
+                          type="button"
+                          onClick={() => updateQty(item.id, item.qty - 1)}
+                          className="flex h-8 w-8 items-center justify-center rounded-full text-foreground transition-colors hover:bg-secondary"
+                          aria-label={`Decrease ${item.name} quantity`}
+                        >
+                          <Minus className="h-3.5 w-3.5" />
+                        </button>
+                        <span className="w-7 text-center text-sm font-semibold text-foreground">
+                          {item.qty}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => updateQty(item.id, item.qty + 1)}
+                          className="flex h-8 w-8 items-center justify-center rounded-full text-foreground transition-colors hover:bg-secondary"
+                          aria-label={`Increase ${item.name} quantity`}
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item.id)}
+                        className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-destructive"
+                        aria-label={`Remove ${item.name}`}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="border-t border-border px-6 py-5">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="font-heading text-lg font-bold text-primary">{money(subtotal)}</span>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Shipping &amp; tax calculated at checkout.
+              </p>
+              <Link
+                href="/checkout"
+                onClick={() => setCartOpen(false)}
+                className="mt-4 flex w-full items-center justify-center rounded-full bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground transition-all hover:scale-[1.01] hover:bg-primary/90"
+              >
+                Check Out
+              </Link>
+              <button
+                type="button"
+                onClick={() => setCartOpen(false)}
+                className="mt-2 w-full rounded-full px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+              >
+                Continue Shopping
+              </button>
+            </div>
+          </>
+        )}
+      </aside>
+    </>
+  )
+}

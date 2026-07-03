@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import { Check, Minus, Plus, ShoppingBag } from 'lucide-react'
 import type { Product } from '@/lib/products-data'
+import { useStore } from '@/lib/store'
 
 export function AddToCart({ product }: { product: Product }) {
+  const { addItem } = useStore()
   const [selected, setSelected] = useState(product.variants[0].catNo)
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
@@ -13,6 +15,15 @@ export function AddToCart({ product }: { product: Product }) {
   const total = variant.price * qty
 
   function handleAdd() {
+    addItem({
+      productSlug: product.slug,
+      name: product.name,
+      catNo: variant.catNo,
+      spec: variant.spec,
+      price: variant.price,
+      image: product.image,
+      qty,
+    })
     setAdded(true)
     window.setTimeout(() => setAdded(false), 2200)
   }

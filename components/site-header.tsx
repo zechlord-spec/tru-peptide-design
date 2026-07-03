@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { ShoppingCart, Menu, X } from 'lucide-react'
+import Link from 'next/link'
+import { ShoppingCart, Menu, X, User } from 'lucide-react'
+import { useStore } from '@/lib/store'
 
 const NAV = [
   { label: 'Products', href: '/products' },
@@ -18,6 +20,7 @@ const NAV = [
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const { count, setCartOpen, hydrated } = useStore()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16)
@@ -36,7 +39,7 @@ export function SiteHeader() {
         }`}
       >
         <div className="flex items-center justify-between gap-4">
-          <a href="#top" className="flex items-center gap-2.5" aria-label="TRU PEPTIDE home">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="TRU PEPTIDE home">
             <Image
               src="/tru-peptide-logo.png"
               alt="TRU PEPTIDE"
@@ -47,7 +50,7 @@ export function SiteHeader() {
             <span className="font-heading text-lg font-bold tracking-tight text-primary">
               TRU PEPTIDE
             </span>
-          </a>
+          </Link>
 
           <nav className="hidden items-center gap-6 xl:flex" aria-label="Primary">
             {NAV.map((item) => (
@@ -62,15 +65,25 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <Link
+              href="/account"
+              aria-label="Account"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/15 bg-card/60 text-primary transition-colors hover:bg-card"
+            >
+              <User className="h-4.5 w-4.5" strokeWidth={1.75} />
+            </Link>
             <button
               type="button"
-              aria-label="Shopping cart"
+              onClick={() => setCartOpen(true)}
+              aria-label={`Shopping cart, ${hydrated ? count : 0} items`}
               className="relative flex h-10 w-10 items-center justify-center rounded-full border border-primary/15 bg-card/60 text-primary transition-colors hover:bg-card"
             >
               <ShoppingCart className="h-4.5 w-4.5" strokeWidth={1.75} />
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
-                0
-              </span>
+              {hydrated && count > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
+                  {count}
+                </span>
+              )}
             </button>
             <button
               type="button"
