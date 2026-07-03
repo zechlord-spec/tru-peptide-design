@@ -3,15 +3,30 @@ import Image from 'next/image'
 const COLUMNS = [
   {
     title: 'Shop',
-    links: ['Products', 'TRU Systems', 'Goals', 'Compound Library'],
+    links: [
+      { label: 'Products', href: '/products' },
+      { label: 'TRU Systems', href: '/systems' },
+      { label: 'Goals', href: '/goals' },
+      { label: 'Compound Library', href: '/library' },
+    ],
   },
   {
     title: 'Learn',
-    links: ['Science', 'Quality', 'Third-Party Testing', 'About'],
+    links: [
+      { label: 'Science', href: '#science' },
+      { label: 'Quality', href: '#quality' },
+      { label: 'Third-Party Testing', href: '#testing' },
+      { label: 'About', href: '#about' },
+    ],
   },
   {
     title: 'Legal',
-    links: ['Privacy', 'Terms', 'Disclaimer', 'Compliance'],
+    links: [
+      { label: 'Privacy', href: '#privacy' },
+      { label: 'Terms', href: '#terms' },
+      { label: 'Disclaimer', href: '#disclaimer' },
+      { label: 'Compliance', href: '#compliance' },
+    ],
   },
 ]
 
@@ -45,12 +60,12 @@ export function SiteFooter() {
               </h3>
               <ul className="mt-4 space-y-3">
                 {col.links.map((link) => (
-                  <li key={link}>
+                  <li key={link.label}>
                     <a
-                      href="#"
+                      href={link.href}
                       className="text-sm text-foreground/60 transition-colors hover:text-primary"
                     >
-                      {link}
+                      {link.label}
                     </a>
                   </li>
                 ))}

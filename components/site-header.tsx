@@ -8,7 +8,7 @@ const NAV = [
   { label: 'Products', href: '/products' },
   { label: 'TRU Systems', href: '/systems' },
   { label: 'Goals', href: '/goals' },
-  { label: 'Compound Library', href: '#library' },
+  { label: 'Compound Library', href: '/library' },
   { label: 'Quality', href: '#quality' },
   { label: 'Science', href: '#science' },
   { label: 'About', href: '#about' },
