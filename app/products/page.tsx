@@ -34,20 +34,20 @@ export default function ProductsPage() {
               A curated catalog of research-grade peptides and compounds, organized by goal, TRU System, and
               mechanism. Every product is third-party tested with a certificate of analysis available on request.
             </p>
-            <div className="mt-8 flex items-center justify-center gap-8">
+            <div className="mt-8 flex items-center justify-center gap-5 sm:gap-8">
               <div className="text-center">
-                <p className="font-heading text-3xl font-bold text-primary">{compoundCount}</p>
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Compounds</p>
+                <p className="font-heading text-2xl font-bold text-primary sm:text-3xl">{compoundCount}</p>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">Compounds</p>
               </div>
               <div className="h-10 w-px bg-border" aria-hidden="true" />
               <div className="text-center">
-                <p className="font-heading text-3xl font-bold text-primary">{variantCount}</p>
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Specifications</p>
+                <p className="font-heading text-2xl font-bold text-primary sm:text-3xl">{variantCount}</p>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">Specifications</p>
               </div>
               <div className="h-10 w-px bg-border" aria-hidden="true" />
               <div className="text-center">
-                <p className="font-heading text-3xl font-bold text-primary">100%</p>
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">COA Verified</p>
+                <p className="font-heading text-2xl font-bold text-primary sm:text-3xl">100%</p>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">COA Verified</p>
               </div>
             </div>
           </div>

@@ -93,8 +93,8 @@ export function Dashboard() {
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[240px_1fr]">
         {/* Sidebar nav */}
-        <aside className="lg:sticky lg:top-28 lg:self-start">
-          <nav className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
+        <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start">
+          <nav className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0">
             {TABS.map((t) => {
               const Icon = t.icon
               const active = tab === t.id
