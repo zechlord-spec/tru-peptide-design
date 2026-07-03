@@ -656,3 +656,22 @@ export function priceRange(p: Product): string {
   const max = Math.max(...prices)
   return min === max ? `$${min}` : `$${min} \u2013 $${max}`
 }
+
+export function getProduct(slug: string): Product | undefined {
+  return PRODUCTS.find((p) => p.slug === slug)
+}
+
+// Related = same category (excluding self), topped up with products that share a goal or system.
+export function getRelatedProducts(product: Product, limit = 3): Product[] {
+  const scored = PRODUCTS.filter((p) => p.slug !== product.slug)
+    .map((p) => {
+      let score = 0
+      if (p.category === product.category) score += 3
+      score += p.goals.filter((g) => product.goals.includes(g)).length
+      score += p.systems.filter((s) => product.systems.includes(s)).length
+      return { p, score }
+    })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+  return scored.slice(0, limit).map((x) => x.p)
+}

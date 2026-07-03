@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { FlaskConical, FileText, Eye, ArrowUpRight } from 'lucide-react'
 import { type Product, priceRange } from '@/lib/products-data'
 
@@ -87,22 +88,21 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
 
         {/* Actions */}
         <div className="mt-auto flex items-center gap-2 pt-3">
-          <button
-            type="button"
-            onClick={() => onQuickView(product)}
+          <Link
+            href={`/products/${product.slug}`}
             className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             View Product
             <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-          </button>
-          <a
-            href="#coa"
+          </Link>
+          <Link
+            href={`/products/${product.slug}#coa`}
             className="inline-flex items-center justify-center gap-1.5 rounded-full border border-border px-3.5 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
-            aria-label={`Download certificate of analysis for ${product.name}`}
+            aria-label={`View certificate of analysis for ${product.name}`}
           >
             <FileText className="h-4 w-4" aria-hidden="true" />
             COA
-          </a>
+          </Link>
         </div>
       </div>
     </article>
