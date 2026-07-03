@@ -186,7 +186,7 @@ export function ProductCatalog() {
               <button
                 type="button"
                 onClick={clearAll}
-                className="mt-3 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                className="btn-premium mt-3 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
               >
                 Reset filters
               </button>

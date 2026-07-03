@@ -38,7 +38,7 @@ export function ProductsSection() {
         action={
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02]"
+            className="btn-premium inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
           >
             <Plus className="h-4 w-4" />
             Add product

@@ -109,7 +109,7 @@ export function Checkout() {
         </p>
         <Link
           href="/products"
-          className="mt-6 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+          className="btn-premium mt-6 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
         >
           Browse Compounds
         </Link>
@@ -444,7 +444,7 @@ function ContinueButton({ disabled, onClick }: { disabled: boolean; onClick: () 
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="mt-6 w-full rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
+      className="btn-premium mt-6 w-full rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
     >
       Continue
     </button>

@@ -87,7 +87,7 @@ export default async function SystemPage({
               <div className="mt-9 flex flex-wrap gap-3">
                 <a
                   href="#compounds"
-                  className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-transform duration-300 hover:scale-[1.03]"
+                  className="btn-premium inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground"
                 >
                   View compounds
                 </a>
@@ -228,7 +228,7 @@ export default async function SystemPage({
                 </div>
                 <button
                   type="button"
-                  className="mt-5 flex w-full items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-transform duration-300 hover:scale-[1.02]"
+                  className="btn-premium mt-5 flex w-full items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
                 >
                   Add to cart
                 </button>

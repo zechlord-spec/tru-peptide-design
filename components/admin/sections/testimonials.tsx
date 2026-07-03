@@ -77,7 +77,7 @@ export function TestimonialsSection() {
                 <button
                   type="button"
                   onClick={() => setStatus(t.id, 'Published')}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition-transform hover:scale-[1.02]"
+                  className="btn-premium inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
                 >
                   <Check className="h-3.5 w-3.5" />
                   Approve

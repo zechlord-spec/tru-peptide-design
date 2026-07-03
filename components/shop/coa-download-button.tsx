@@ -53,7 +53,7 @@ export function CoaDownloadButton({
     <button
       type="button"
       onClick={handleDownload}
-      className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-transform duration-300 hover:scale-[1.02]"
+      className="btn-premium inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground"
     >
       {done ? <Check className="h-4 w-4" /> : <Download className="h-4 w-4" />}
       {done ? 'COA Downloaded' : 'Download COA'}

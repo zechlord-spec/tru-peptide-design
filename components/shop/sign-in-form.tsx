@@ -51,7 +51,7 @@ export function SignInForm({ onSignIn }: { onSignIn: (name: string, email: strin
         <button
           type="submit"
           disabled={!valid}
-          className="w-full rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
+          className="btn-premium w-full rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           Continue
         </button>

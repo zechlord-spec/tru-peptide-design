@@ -95,7 +95,7 @@ export function CoasSection() {
                     <button
                       type="button"
                       onClick={() => publish(r.batch)}
-                      className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-transform hover:scale-[1.03]"
+                      className="btn-premium inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground"
                     >
                       <Check className="h-3.5 w-3.5" />
                       Publish

@@ -36,7 +36,7 @@ export function Newsletter() {
             />
             <button
               type="submit"
-              className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground transition-transform duration-300 hover:scale-[1.03]"
+              className="btn-premium group inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground"
             >
               Subscribe
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

@@ -34,7 +34,7 @@ export function OrderConfirmation({ orderId }: { orderId: string }) {
         </p>
         <Link
           href="/account"
-          className="mt-6 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+          className="btn-premium mt-6 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
         >
           View your account
         </Link>
@@ -83,7 +83,7 @@ export function OrderConfirmation({ orderId }: { orderId: string }) {
       <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <Link
           href="/account"
-          className="w-full rounded-full bg-primary px-8 py-3.5 text-center text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 sm:w-auto"
+          className="btn-premium w-full rounded-full bg-primary px-8 py-3.5 text-center text-sm font-semibold text-primary-foreground hover:bg-primary/90 sm:w-auto"
         >
           View Order History
         </Link>

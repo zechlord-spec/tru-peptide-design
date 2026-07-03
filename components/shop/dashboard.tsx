@@ -397,7 +397,7 @@ function SettingsPanel() {
 
         <button
           type="submit"
-          className="rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+          className="btn-premium rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
         >
           {saved ? 'Saved' : 'Save changes'}
         </button>

@@ -87,7 +87,7 @@ export function Quality() {
             </ul>
             <a
               href="#products"
-              className="mt-8 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-transform duration-300 hover:scale-[1.03]"
+              className="btn-premium mt-8 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
             >
               View Test Results
             </a>

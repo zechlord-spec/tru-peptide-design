@@ -134,7 +134,7 @@ function GoalDetail({ goal, onBack }: { goal: Goal; onBack: () => void }) {
               </div>
               <button
                 type="button"
-                className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform duration-300 hover:scale-[1.02]"
+                className="btn-premium mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
               >
                 View Product
               </button>

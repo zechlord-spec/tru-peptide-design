@@ -266,7 +266,7 @@ export default function QualityPage() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/products"
-              className="inline-flex items-center justify-center gap-1.5 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-transform duration-300 hover:scale-[1.03]"
+              className="btn-premium inline-flex items-center justify-center gap-1.5 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground"
             >
               Browse Compounds
               <ArrowUpRight className="h-4 w-4" />

@@ -162,7 +162,7 @@ export function CartDrawer() {
               <Link
                 href="/checkout"
                 onClick={() => setCartOpen(false)}
-                className="mt-4 flex w-full items-center justify-center rounded-full bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground transition-all hover:scale-[1.01] hover:bg-primary/90"
+                className="btn-premium mt-4 flex w-full items-center justify-center rounded-full bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
               >
                 Check Out
               </Link>
