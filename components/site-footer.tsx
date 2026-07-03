@@ -2,12 +2,12 @@ import Image from 'next/image'
 
 const COLUMNS = [
   {
-    title: 'Platform',
-    links: ['Science', 'Protocols', 'Research', 'Purity Testing'],
+    title: 'Shop',
+    links: ['Products', 'TRU Systems', 'Goals', 'Compound Library'],
   },
   {
-    title: 'Company',
-    links: ['About', 'Standards', 'Careers', 'Contact'],
+    title: 'Learn',
+    links: ['Science', 'Quality', 'Third-Party Testing', 'About'],
   },
   {
     title: 'Legal',

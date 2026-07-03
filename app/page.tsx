@@ -1,9 +1,12 @@
 import { SiteHeader } from '@/components/site-header'
 import { Hero } from '@/components/hero'
+import { Journey } from '@/components/journey'
+import { Systems } from '@/components/systems'
 import { Science } from '@/components/science'
-import { Protocols } from '@/components/protocols'
-import { Approach } from '@/components/approach'
-import { CTA } from '@/components/cta'
+import { Products } from '@/components/products'
+import { Quality } from '@/components/quality'
+import { Testimonials } from '@/components/testimonials'
+import { Newsletter } from '@/components/newsletter'
 import { SiteFooter } from '@/components/site-footer'
 
 export default function Page() {
@@ -12,10 +15,13 @@ export default function Page() {
       <SiteHeader />
       <main>
         <Hero />
+        <Journey />
+        <Systems />
         <Science />
-        <Protocols />
-        <Approach />
-        <CTA />
+        <Products />
+        <Quality />
+        <Testimonials />
+        <Newsletter />
       </main>
       <SiteFooter />
     </div>
