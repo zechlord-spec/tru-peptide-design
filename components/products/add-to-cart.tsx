@@ -99,10 +99,10 @@ export function AddToCart({ product }: { product: Product }) {
       <button
         type="button"
         onClick={handleAdd}
-        className={`mt-6 flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-semibold transition-all duration-300 ${
+        className={`btn-premium mt-6 flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-semibold ${
           added
             ? 'bg-accent text-accent-foreground'
-            : 'bg-primary text-primary-foreground hover:scale-[1.01] hover:bg-primary/90'
+            : 'bg-primary text-primary-foreground hover:bg-primary/90'
         }`}
       >
         {added ? (

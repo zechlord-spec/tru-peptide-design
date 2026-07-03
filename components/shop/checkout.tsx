@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, ChevronLeft, Lock, CreditCard, Truck, Zap } from 'lucide-react'
 import { useStore, money, TAX_RATE, type Address } from '@/lib/store'
+import { Spinner } from '@/components/animations/loaders'
 
 type StepId = 'contact' | 'shipping' | 'delivery' | 'payment'
 const ORDER: StepId[] = ['contact', 'shipping', 'delivery', 'payment']
@@ -361,9 +362,16 @@ export function Checkout() {
               type="button"
               onClick={handlePlaceOrder}
               disabled={!paymentValid || placing}
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
+              className="btn-premium mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {placing ? 'Processing…' : `Place Order · ${money(total)}`}
+              {placing ? (
+                <>
+                  <Spinner size={18} />
+                  Processing…
+                </>
+              ) : (
+                `Place Order · ${money(total)}`
+              )}
             </button>
             <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground">
               For laboratory and research use only. Not for human consumption.

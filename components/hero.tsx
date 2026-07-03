@@ -1,9 +1,12 @@
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
+import { FloatingMolecules } from '@/components/animations/floating-molecules'
 
 export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden px-4 pb-20 pt-36 md:pt-44">
+      <FloatingMolecules />
+
       {/* Floating molecular artwork */}
       <div className="pointer-events-none absolute -right-24 top-28 hidden w-[44rem] max-w-[56vw] opacity-90 lg:block">
         <div className="animate-float-slow">
@@ -46,7 +49,7 @@ export function Hero() {
           <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
             <a
               href="#goals"
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground transition-transform duration-300 hover:scale-[1.03]"
+              className="btn-premium group inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground"
             >
               Discover Your Goal
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

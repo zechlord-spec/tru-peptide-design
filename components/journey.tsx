@@ -1,4 +1,5 @@
 import { Target, Layers, Microscope, BookOpen, ShoppingBag, CheckCircle2 } from 'lucide-react'
+import { Reveal } from '@/components/animations/reveal'
 
 const STEPS = [
   {
@@ -47,8 +48,10 @@ export function Journey() {
 
         <ol className="mt-16 grid gap-5 md:grid-cols-3 lg:grid-cols-5">
           {STEPS.map((step, i) => (
-            <li
+            <Reveal
+              as="li"
               key={step.title}
+              delay={i * 90}
               className="group relative flex flex-col rounded-3xl border border-border/60 bg-card p-6 shadow-[0_1px_2px_rgba(8,27,53,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-24px_rgba(8,27,53,0.28)]"
             >
               <div className="flex items-center justify-between">
@@ -61,7 +64,7 @@ export function Journey() {
               </div>
               <h3 className="mt-5 font-heading text-lg font-bold text-primary">{step.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-foreground/65">{step.desc}</p>
-            </li>
+            </Reveal>
           ))}
         </ol>
 

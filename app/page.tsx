@@ -8,6 +8,7 @@ import { Quality } from '@/components/quality'
 import { Testimonials } from '@/components/testimonials'
 import { Newsletter } from '@/components/newsletter'
 import { SiteFooter } from '@/components/site-footer'
+import { Reveal } from '@/components/animations/reveal'
 
 export default function Page() {
   return (
@@ -15,13 +16,27 @@ export default function Page() {
       <SiteHeader />
       <main>
         <Hero />
-        <Journey />
-        <Systems />
-        <Science />
-        <Products />
-        <Quality />
-        <Testimonials />
-        <Newsletter />
+        <Reveal>
+          <Journey />
+        </Reveal>
+        <Reveal>
+          <Systems />
+        </Reveal>
+        <Reveal>
+          <Science />
+        </Reveal>
+        <Reveal>
+          <Products />
+        </Reveal>
+        <Reveal>
+          <Quality />
+        </Reveal>
+        <Reveal>
+          <Testimonials />
+        </Reveal>
+        <Reveal variant="scale">
+          <Newsletter />
+        </Reveal>
       </main>
       <SiteFooter />
     </div>
