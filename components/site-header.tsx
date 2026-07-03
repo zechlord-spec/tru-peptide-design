@@ -9,7 +9,7 @@ const NAV = [
   { label: 'TRU Systems', href: '/systems' },
   { label: 'Goals', href: '/goals' },
   { label: 'Compound Library', href: '/library' },
-  { label: 'Quality', href: '#quality' },
+  { label: 'Quality', href: '/quality' },
   { label: 'Science', href: '#science' },
   { label: 'About', href: '#about' },
   { label: 'Contact', href: '#contact' },

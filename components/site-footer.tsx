@@ -14,8 +14,8 @@ const COLUMNS = [
     title: 'Learn',
     links: [
       { label: 'Science', href: '#science' },
-      { label: 'Quality', href: '#quality' },
-      { label: 'Third-Party Testing', href: '#testing' },
+      { label: 'Quality', href: '/quality' },
+      { label: 'Third-Party Testing', href: '/quality#third-party-coa' },
       { label: 'About', href: '#about' },
     ],
   },
