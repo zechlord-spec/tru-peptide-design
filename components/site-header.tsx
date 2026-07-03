@@ -6,7 +6,7 @@ import { ShoppingCart, Menu, X } from 'lucide-react'
 
 const NAV = [
   { label: 'Products', href: '#products' },
-  { label: 'TRU Systems', href: '#systems' },
+  { label: 'TRU Systems', href: '/systems' },
   { label: 'Goals', href: '/goals' },
   { label: 'Compound Library', href: '#library' },
   { label: 'Quality', href: '#quality' },
