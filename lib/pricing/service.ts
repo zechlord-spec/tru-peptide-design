@@ -478,17 +478,34 @@ export async function refreshAllPricing(
   for (const product of PRODUCTS) {
     const doses = product.variants.map((v) => vialDose(v.spec))
     const research = await researchPeptidePricing({ peptideName: product.name, doses })
-    if (!research) {
-      failures++
-      continue
-    }
+    // When live market research is unavailable (e.g. the AI Gateway is down),
+    // we don't skip the product: we still re-run the LAST KNOWN market data
+    // through the current engine so prices converge on the active rules.
+    if (!research) failures++
 
     for (const variant of product.variants) {
       const dose = vialDose(variant.spec)
-      const match = research.find((r) => normalizeDose(r.dose) === normalizeDose(dose))
+      const prev = before.get(`${product.slug}::${variant.catNo}`)
+
+      // Prefer a fresh research match; otherwise fall back to the market data
+      // already stored for this variant so a research outage never freezes
+      // prices at stale values.
+      const liveMatch = research?.find((r) => normalizeDose(r.dose) === normalizeDose(dose)) ?? null
+      const match =
+        liveMatch ??
+        (prev && prev.marketAveragePrice != null && prev.marketLow != null
+          ? {
+              dose,
+              marketLow: prev.marketLow,
+              marketHigh: prev.marketHigh ?? prev.marketAveragePrice,
+              marketAverage: prev.marketAveragePrice,
+              marketMedian: prev.marketMedian ?? prev.marketAveragePrice,
+              numberOfSources: prev.numberOfSources ?? 0,
+              confidence: prev.confidenceScore ?? 0,
+            }
+          : null)
       if (!match) continue
 
-      const prev = before.get(`${product.slug}::${variant.catNo}`)
       const confidence = clamp01(match.confidence)
 
       const inputs: DeriveInputs = {
@@ -581,7 +598,9 @@ export async function refreshAllPricing(
   }
 
   const status = failures === 0 ? 'success' : updated > 0 ? 'partial' : 'failed'
-  const notes = `${updated} variants updated${failures ? `, ${failures} products failed research` : ''}`
+  const notes = `${updated} variants updated${
+    failures ? `, ${failures} products used last-known market data (live research unavailable)` : ''
+  }`
   await db.insert(pricingRefreshLog).values({ productsUpdated: updated, status, notes })
 
   const [report] = await db
