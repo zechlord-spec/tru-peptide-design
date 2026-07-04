@@ -21,10 +21,12 @@ type VialImageProps = {
   sizes?: string
 }
 
-/** Approved placeholder vial artwork (blue cap, clear glass, blank white label). */
-const VIAL_TEMPLATE = '/vial-template.png'
+/** Premium studio vial photography (amber glass, matte gold cap, blank cream label). */
+const VIAL_TEMPLATE = '/vial-amber-template.png'
 /** Tru Peptide brand blue used for the strength badge and the footer band. */
 const BRAND_BLUE = '#0b338f'
+/** Matches the vial photo's studio backdrop so object-contain letterboxing blends seamlessly. */
+const STUDIO_BACKDROP = 'linear-gradient(180deg,#0b0e13 0%,#14171d 55%,#34373c 100%)'
 
 /**
  * The single source of truth for every product vial across the storefront.
@@ -56,7 +58,8 @@ export function VialImage({
   if (photo) {
     return (
       <div
-        className={`absolute inset-0 flex items-center justify-center bg-[#eef1f4] ${className ?? ''}`}
+        className={`absolute inset-0 flex items-center justify-center ${className ?? ''}`}
+        style={{ background: STUDIO_BACKDROP }}
       >
         <Image
           src={photo}
@@ -72,38 +75,40 @@ export function VialImage({
 
   return (
     <div
-      className={`absolute inset-0 flex items-center justify-center bg-[#eef1f4] ${className ?? ''}`}
+      className={`absolute inset-0 flex items-center justify-center ${className ?? ''}`}
+      style={{ background: STUDIO_BACKDROP }}
     >
       {/* The stage matches the template's intrinsic aspect ratio so the overlaid
           label always tracks the printed label position at any render size. */}
-      <div className="relative h-full max-h-full" style={{ aspectRatio: '300 / 880' }}>
+      <div className="relative h-full max-h-full" style={{ aspectRatio: '645 / 850' }}>
         <Image
           src={VIAL_TEMPLATE}
-          alt={`${name} research vial`}
+          alt={`${name} amber research vial`}
           fill
           priority={priority}
           sizes={sizes}
           className="object-contain"
         />
 
-        {/* Dynamic label — sits exactly over (and fully covers) the placeholder's
-            printed label. Container-query units keep every element proportional. */}
+        {/* Dynamic label — sits exactly over (and fully covers) the photographed
+            cream label. Container-query units keep every element proportional so
+            text stays flat, crisp and fully visible at any render size. */}
         <div
-          className="absolute overflow-hidden rounded-[4cqw] shadow-[0_0.6cqw_2cqw_rgba(6,20,60,0.12)]"
+          className="absolute overflow-hidden rounded-[2.4cqw] shadow-[0_0.6cqw_2cqw_rgba(0,0,0,0.28)]"
           style={{
-            left: '6%',
-            width: '88%',
-            top: '35.2%',
-            height: '45.3%',
+            left: '25.5%',
+            width: '49%',
+            top: '43.4%',
+            height: '36.4%',
             containerType: 'inline-size',
             background:
-              'linear-gradient(90deg,#e4e7ec 0%,#f6f8fa 13%,#fbfcfd 50%,#f6f8fa 87%,#e4e7ec 100%)',
+              'linear-gradient(90deg,#e6e2d6 0%,#f4f1e8 12%,#fbfaf4 50%,#f4f1e8 88%,#e6e2d6 100%)',
           }}
         >
           <div className="flex h-full flex-col items-center">
-            <div className="flex flex-1 flex-col items-center px-[7cqw] pt-[7cqw] text-center">
+            <div className="flex flex-1 flex-col items-center px-[7cqw] pt-[6cqw] text-center">
               {/* Official Tru Peptide logo (exact approved brand mark) */}
-              <div className="relative h-[15cqw] w-[62%]">
+              <div className="relative h-[13cqw] w-[58%]">
                 <Image
                   src="/tru-peptide-label-logo.png"
                   alt="Tru Peptide"
@@ -116,14 +121,14 @@ export function VialImage({
               {showText ? (
                 <>
                   {/* Dynamic: product name */}
-                  <p className="mt-[6cqw] text-[13cqw] font-extrabold uppercase leading-[1.02] tracking-tight text-[#0b0b0d]">
+                  <p className="mt-[5cqw] text-[11.5cqw] font-extrabold uppercase leading-[1.02] tracking-tight text-[#0b0b0d]">
                     {label.name}
                   </p>
 
                   {/* Dynamic: strength badge */}
                   {label.strength ? (
                     <span
-                      className="mt-[4cqw] inline-block rounded-[1.6cqw] px-[7cqw] py-[1.8cqw] text-[8.5cqw] font-bold uppercase leading-none text-white"
+                      className="mt-[3.5cqw] inline-block rounded-[1.4cqw] px-[6cqw] py-[1.6cqw] text-[7.5cqw] font-bold uppercase leading-none text-white"
                       style={{ backgroundColor: BRAND_BLUE }}
                     >
                       {label.strength}
@@ -131,19 +136,19 @@ export function VialImage({
                   ) : null}
 
                   {/* Constant descriptors */}
-                  <p className="mt-[5cqw] text-[7cqw] font-semibold uppercase tracking-[0.05em] text-[#2b2b30]">
+                  <p className="mt-[4cqw] text-[6cqw] font-semibold uppercase tracking-[0.05em] text-[#2b2b30]">
                     99% Purity
                   </p>
-                  <p className="mt-[2.2cqw] text-[6cqw] font-medium uppercase tracking-[0.04em] text-[#33333a]">
+                  <p className="mt-[1.8cqw] text-[5.2cqw] font-medium uppercase tracking-[0.04em] text-[#33333a]">
                     Research Use Only
                   </p>
-                  <p className="mt-[1.4cqw] text-[5.3cqw] font-medium uppercase tracking-[0.03em] text-[#33333a]">
+                  <p className="mt-[1.2cqw] text-[4.7cqw] font-medium uppercase tracking-[0.03em] text-[#33333a]">
                     Not For Human Consumption
                   </p>
 
                   {/* Optional dynamic SKU */}
                   {showSku && label.sku ? (
-                    <p className="mt-[2cqw] text-[4.6cqw] font-medium uppercase tracking-[0.08em] text-[#6a6a70]">
+                    <p className="mt-[1.8cqw] text-[4.2cqw] font-medium uppercase tracking-[0.08em] text-[#6a6a70]">
                       SKU {label.sku}
                     </p>
                   ) : null}
@@ -153,7 +158,7 @@ export function VialImage({
 
             {/* Constant blue footer band */}
             <div
-              className="mt-auto w-full whitespace-nowrap py-[3.4cqw] text-center text-[4.4cqw] font-semibold uppercase leading-none tracking-[0.1em] text-white"
+              className="mt-auto w-full whitespace-nowrap py-[3cqw] text-center text-[4cqw] font-semibold uppercase leading-none tracking-[0.08em] text-white"
               style={{ backgroundColor: BRAND_BLUE }}
             >
               For Research Purposes Only
