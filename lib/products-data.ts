@@ -650,6 +650,42 @@ export const COMPOUND_TYPES = Array.from(new Set(PRODUCTS.map((p) => p.compoundT
 export const GOAL_OPTIONS = Array.from(new Set(PRODUCTS.flatMap((p) => p.goals))).sort()
 export const SYSTEM_OPTIONS = Array.from(new Set(PRODUCTS.flatMap((p) => p.systems))).sort()
 
+// NOTE: variant.price is the INTERNAL supplier box price (a full box of vials).
+// It is never shown to customers — the storefront only ever displays the
+// per-vial retail price produced by the market pricing service. Box economics
+// live exclusively in the admin panel.
+
+// Supplier box price for a variant (internal / admin only).
+export function supplierBoxPrice(v: ProductVariant): number {
+  return v.price
+}
+
+// Number of vials packed in a supplier box, parsed from the internal spec
+// (e.g. "5mg × 10 vials" -> 10). Internal use only.
+export function vialsPerBox(spec: string): number {
+  const m = spec.match(/×\s*(\d+)\s*vials?/i)
+  return m ? Number(m[1]) : 1
+}
+
+// Customer-facing per-vial dose, parsed from the internal spec
+// (e.g. "5mg × 10 vials" -> "5mg", "3ml × 10 vials" -> "3ml").
+export function vialDose(spec: string): string {
+  const m = spec.match(/^\s*([\d.]+\s*m[gl])/i)
+  if (m) return m[1].replace(/\s+/g, '')
+  return spec.split('×')[0].trim()
+}
+
+// Customer-facing single-vial label (e.g. "5mg vial"). No box language.
+export function vialLabel(spec: string): string {
+  return `${vialDose(spec)} vial`
+}
+
+// Internal wholesale cost per vial (supplier box price / vials per box).
+export function wholesalePerVial(v: ProductVariant): number {
+  return v.price / vialsPerBox(v.spec)
+}
+
+// Internal supplier box price range — admin only.
 export function priceRange(p: Product): string {
   const prices = p.variants.map((v) => v.price)
   const min = Math.min(...prices)
