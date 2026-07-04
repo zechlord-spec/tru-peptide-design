@@ -17,6 +17,7 @@ import {
   BarChart3,
   DollarSign,
   Radar,
+  ShieldAlert,
   CalendarClock,
   Menu,
   X,
@@ -39,6 +40,7 @@ import { AnalyticsSection } from './sections/analytics'
 import { PricingDashboardSection } from './sections/pricing-dashboard'
 import { MarketIntelligenceSection } from './sections/market-intelligence'
 import { PricingReportsSection } from './sections/pricing-reports'
+import { PricingReviewSection } from './sections/pricing-review'
 
 type NavItem = { id: string; label: string; icon: LucideIcon; group: string }
 
@@ -47,9 +49,7 @@ const NAV: NavItem[] = [
   { id: 'analytics', label: 'Analytics', icon: BarChart3, group: 'General' },
   { id: 'pricing', label: 'Pricing Dashboard', icon: DollarSign, group: 'Pricing' },
   { id: 'market', label: 'Market Intelligence', icon: Radar, group: 'Pricing' },
-  { id: 'pricing-reports', label: 'Scheduler & Reports', icon: CalendarClock, group: 'Pricing' },
-  { id: 'pricing', label: 'Pricing Dashboard', icon: DollarSign, group: 'Pricing' },
-  { id: 'market-intel', label: 'Market Intelligence', icon: Radar, group: 'Pricing' },
+  { id: 'pricing-review', label: 'Review Queue', icon: ShieldAlert, group: 'Pricing' },
   { id: 'pricing-reports', label: 'Scheduler & Reports', icon: CalendarClock, group: 'Pricing' },
   { id: 'orders', label: 'Orders', icon: ShoppingBag, group: 'Commerce' },
   { id: 'inventory', label: 'Inventory', icon: Boxes, group: 'Commerce' },
@@ -85,12 +85,8 @@ export function AdminShell() {
         return <PricingDashboardSection />
       case 'market':
         return <MarketIntelligenceSection />
-      case 'pricing-reports':
-        return <PricingReportsSection />
-      case 'pricing':
-        return <PricingDashboardSection />
-      case 'market-intel':
-        return <MarketIntelligenceSection />
+      case 'pricing-review':
+        return <PricingReviewSection />
       case 'pricing-reports':
         return <PricingReportsSection />
       case 'orders':

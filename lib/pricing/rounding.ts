@@ -19,6 +19,21 @@ export function roundToAttractive(value: number): number {
   return v >= 100 ? nearest9Below(v) : nearest5or9Below(v)
 }
 
+/**
+ * Round UP to the nearest attractive value (ending in 5 or 9) that is >= value.
+ * Used for the hard price floor so the protected minimum stays charming while
+ * never dipping below the required minimum.
+ */
+export function ceilToAttractive(value: number): number {
+  if (!Number.isFinite(value) || value <= 0) return 0
+  const v = Math.ceil(value)
+  for (let c = v; c <= v + 12; c++) {
+    const end = c % 10
+    if (end === 5 || end === 9) return c
+  }
+  return v
+}
+
 // Largest number ending in 9 that is <= v.
 function nearest9Below(v: number): number {
   let r = Math.floor((v - 9) / 10) * 10 + 9

@@ -3,10 +3,13 @@
 import { revalidatePath } from 'next/cache'
 import type { PricingMode } from '@/lib/db/schema'
 import {
+  approveReviewPrice,
+  dismissReview,
   getDashboardRows,
   getLatestReport,
   getReports,
   getRefreshLog,
+  getReviewQueue,
   getSettings,
   refreshAllPricing,
   setManualPrice,
@@ -48,7 +51,22 @@ export async function updateSupplierCostAction(
   revalidateStorefront()
 }
 
+export async function approveReviewAction(slug: string, variantKey: string) {
+  await approveReviewPrice(slug, variantKey)
+  revalidateStorefront()
+}
+
+export async function dismissReviewAction(slug: string, variantKey: string) {
+  await dismissReview(slug, variantKey)
+  revalidateStorefront()
+}
+
 // ---- Read actions (used by admin SWR fetchers) ----
+
+export async function getReviewQueueAction() {
+  const rows = await getReviewQueue()
+  return { rows }
+}
 
 export async function getPricingDashboardAction() {
   const [rows, settings] = await Promise.all([getDashboardRows(), getSettings()])

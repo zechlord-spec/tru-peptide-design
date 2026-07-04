@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   jsonb,
   numeric,
@@ -28,6 +29,15 @@ export const peptidePricing = pgTable(
     confidenceScore: numeric('confidence_score', { mode: 'number' }).notNull().default(0),
     manualPrice: numeric('manual_price', { mode: 'number' }),
     retailPrice: numeric('retail_price', { mode: 'number' }).notNull().default(0),
+    // --- Pricing protection / manual-review queue ---
+    // When the market-derived price would fall below the margin floor
+    // (retail < wholesale × 2.5, i.e. < 60% gross margin) the refresh does NOT
+    // auto-apply it. Instead the row is flagged here for an admin to review.
+    needsReview: boolean('needs_review').notNull().default(false),
+    reviewReason: text('review_reason'),
+    proposedPrice: numeric('proposed_price', { mode: 'number' }),
+    proposedMarginPct: numeric('proposed_margin_pct', { mode: 'number' }),
+    flaggedAt: timestamp('flagged_at', { withTimezone: true }),
     lastUpdated: timestamp('last_updated', { withTimezone: true }).notNull().defaultNow(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },

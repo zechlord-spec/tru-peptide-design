@@ -10,7 +10,7 @@ import {
   vialsPerBox,
   wholesalePerVial,
 } from '@/lib/products-data'
-import { recalcPricingRow } from './derive'
+import { marginFloorPrice, recalcPricingRow } from './derive'
 import { roundToAttractive } from './rounding'
 import type { RetailSnapshot } from './format'
 import { researchPeptidePricing } from './market-research'
@@ -62,6 +62,12 @@ export type DashboardRow = {
   grossMargin: number
   marginPct: number
   belowTargetMargin: boolean // true when NOT at least 20% below market (needs attention)
+  marginFloor: number // wholesale × 2.5 — the protected minimum retail price
+  needsReview: boolean // flagged by pricing protection (margin < 60%)
+  reviewReason: string | null
+  proposedPrice: number | null // market price that was withheld
+  proposedMarginPct: number | null
+  flaggedAt: string | null
   lastUpdated: string
 }
 
@@ -111,6 +117,12 @@ export async function getDashboardRows(): Promise<DashboardRow[]> {
         grossMargin,
         marginPct,
         belowTargetMargin,
+        marginFloor: marginFloorPrice(wholesale),
+        needsReview: row.needsReview,
+        reviewReason: row.reviewReason,
+        proposedPrice: row.proposedPrice,
+        proposedMarginPct: row.proposedMarginPct,
+        flaggedAt: row.flaggedAt ? row.flaggedAt.toISOString() : null,
         lastUpdated: row.lastUpdated.toISOString(),
       })
     }
@@ -202,9 +214,20 @@ async function recomputeRow(row: PricingRow, mode: PricingMode, markup: number) 
     mode,
     markupMultiplier: markup,
   })
+  // An explicit admin recompute always lands on a floor-safe price, so any
+  // pending margin-review flag is resolved.
   await db
     .update(peptidePricing)
-    .set({ wholesalePerVial: derived.wholesalePerVial, retailPrice: derived.retailPrice, lastUpdated: new Date() })
+    .set({
+      wholesalePerVial: derived.wholesalePerVial,
+      retailPrice: derived.retailPrice,
+      needsReview: false,
+      reviewReason: null,
+      proposedPrice: null,
+      proposedMarginPct: null,
+      flaggedAt: null,
+      lastUpdated: new Date(),
+    })
     .where(eq(peptidePricing.id, row.id))
 }
 
@@ -240,6 +263,64 @@ export async function setManualPrice(slug: string, variantKey: string, price: nu
     .set({ manualPrice: price })
     .where(eq(peptidePricing.id, row.id))
   await recomputeRow({ ...row, manualPrice: price }, settings.activeMode as PricingMode, settings.markupMultiplier)
+}
+
+/** Products currently flagged by pricing protection (margin below the 60% floor). */
+export async function getReviewQueue(): Promise<DashboardRow[]> {
+  const rows = await getDashboardRows()
+  return rows.filter((r) => r.needsReview)
+}
+
+/**
+ * Approve a flagged product's withheld market price: apply it as the new retail
+ * price (the admin is explicitly accepting a sub-60% margin) and clear the flag.
+ */
+export async function approveReviewPrice(slug: string, variantKey: string) {
+  const rows = await db
+    .select()
+    .from(peptidePricing)
+    .where(and(eq(peptidePricing.productSlug, slug), eq(peptidePricing.variantKey, variantKey)))
+    .limit(1)
+  const row = rows[0]
+  if (!row || !row.needsReview) return
+  const price = row.proposedPrice && row.proposedPrice > 0 ? row.proposedPrice : row.retailPrice
+  await db
+    .update(peptidePricing)
+    .set({
+      retailPrice: price,
+      needsReview: false,
+      reviewReason: null,
+      proposedPrice: null,
+      proposedMarginPct: null,
+      flaggedAt: null,
+      lastUpdated: new Date(),
+    })
+    .where(eq(peptidePricing.id, row.id))
+}
+
+/**
+ * Dismiss a review flag WITHOUT applying the withheld price. The current retail
+ * price (protected at the ≥60% floor) is kept.
+ */
+export async function dismissReview(slug: string, variantKey: string) {
+  const rows = await db
+    .select()
+    .from(peptidePricing)
+    .where(and(eq(peptidePricing.productSlug, slug), eq(peptidePricing.variantKey, variantKey)))
+    .limit(1)
+  const row = rows[0]
+  if (!row) return
+  await db
+    .update(peptidePricing)
+    .set({
+      needsReview: false,
+      reviewReason: null,
+      proposedPrice: null,
+      proposedMarginPct: null,
+      flaggedAt: null,
+      lastUpdated: new Date(),
+    })
+    .where(eq(peptidePricing.id, row.id))
 }
 
 export async function updateSupplierCost(
@@ -313,6 +394,46 @@ export async function refreshAllPricing(
         markupMultiplier: settings.markupMultiplier,
       })
       const confidence = clamp01(match.confidence)
+      const prev = before.get(`${product.slug}::${variant.catNo}`)
+
+      // PRICING PROTECTION: if the freshly computed market price would give less
+      // than a 60% gross margin (retail < wholesale × 2.5), DO NOT auto-apply it.
+      // Flag the product for manual review and keep its existing retail price.
+      const passesMarginFloor = derived.meetsMarginFloor
+      const proposedMarginPct =
+        derived.rawRetailPrice > 0
+          ? round2(((derived.rawRetailPrice - derived.wholesalePerVial) / derived.rawRetailPrice) * 100)
+          : 0
+
+      // Market-intelligence fields are always refreshed.
+      const marketFields = {
+        marketLow: match.marketLow,
+        marketHigh: match.marketHigh,
+        marketAveragePrice: match.marketAverage,
+        marketMedian: match.marketMedian,
+        numberOfSources: match.numberOfSources,
+        confidenceScore: confidence,
+        wholesalePerVial: derived.wholesalePerVial,
+        lastUpdated: new Date(),
+      }
+
+      const reviewFields = passesMarginFloor
+        ? {
+            retailPrice: derived.retailPrice,
+            needsReview: false,
+            reviewReason: null,
+            proposedPrice: null,
+            proposedMarginPct: null,
+            flaggedAt: null,
+          }
+        : {
+            // Retail price intentionally left unchanged (protection).
+            needsReview: true,
+            reviewReason: `Market price of $${derived.rawRetailPrice} would yield only ${proposedMarginPct}% gross margin (minimum 60%). Not auto-applied.`,
+            proposedPrice: derived.rawRetailPrice,
+            proposedMarginPct,
+            flaggedAt: prev?.needsReview && prev.flaggedAt ? prev.flaggedAt : new Date(),
+          }
 
       await db
         .insert(peptidePricing)
@@ -321,36 +442,24 @@ export async function refreshAllPricing(
           variantKey: variant.catNo,
           supplierBoxPrice: supplierBoxPrice(variant),
           vialsPerBox: vialsPerBox(variant.spec),
-          wholesalePerVial: derived.wholesalePerVial,
-          marketLow: match.marketLow,
-          marketHigh: match.marketHigh,
-          marketAveragePrice: match.marketAverage,
-          marketMedian: match.marketMedian,
-          numberOfSources: match.numberOfSources,
-          confidenceScore: confidence,
+          // New rows have no prior price, so seed at the protected floor.
           retailPrice: derived.retailPrice,
-          lastUpdated: new Date(),
+          ...marketFields,
+          ...reviewFields,
         })
         .onConflictDoUpdate({
           target: [peptidePricing.productSlug, peptidePricing.variantKey],
           set: {
-            marketLow: match.marketLow,
-            marketHigh: match.marketHigh,
-            marketAveragePrice: match.marketAverage,
-            marketMedian: match.marketMedian,
-            numberOfSources: match.numberOfSources,
-            confidenceScore: confidence,
-            wholesalePerVial: derived.wholesalePerVial,
-            retailPrice: derived.retailPrice,
-            lastUpdated: new Date(),
+            ...marketFields,
+            ...reviewFields,
           },
         })
       updated++
 
-      // Classify the change vs the pre-refresh price.
-      const prev = before.get(`${product.slug}::${variant.catNo}`)
+      // Classify the change vs the pre-refresh price. When flagged, the stored
+      // price is unchanged, so oldPrice === newPrice (no increase/decrease).
       const oldPrice = prev?.retailPrice ?? derived.retailPrice
-      const newPrice = derived.retailPrice
+      const newPrice = passesMarginFloor ? derived.retailPrice : oldPrice
       const changeAmount = round2(newPrice - oldPrice)
       const changePct = oldPrice > 0 ? round2(((newPrice - oldPrice) / oldPrice) * 100) : 0
       const diffFromMarketPct =
@@ -374,9 +483,12 @@ export async function refreshAllPricing(
       if (changeAmount > 0.005) increases.push(change)
       else if (changeAmount < -0.005) decreases.push(change)
 
-      // Manual-review triggers: thin/low-confidence sourcing, price no longer
-      // at least 20% below market, or a large week-over-week swing.
+      // Manual-review triggers: below the 60% margin floor (protection),
+      // thin/low-confidence sourcing, price no longer at least 20% below
+      // market, or a large week-over-week swing.
       const reasons: string[] = []
+      if (!passesMarginFloor)
+        reasons.push(`Below 60% margin floor — market price ($${derived.rawRetailPrice}) not auto-applied`)
       if (confidence < 0.5) reasons.push('Low confidence in market data')
       if (match.numberOfSources < 3) reasons.push('Fewer than 3 competitor sources')
       if (match.marketAverage > 0 && newPrice > match.marketAverage * 0.8)
