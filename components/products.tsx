@@ -1,5 +1,5 @@
-import Image from 'next/image'
 import { Plus } from 'lucide-react'
+import { VialImage } from '@/components/products/vial-image'
 
 const PRODUCTS = [
   { name: 'BPC-157', category: 'Recovery', price: '$89', purity: '99.9%' },
@@ -37,13 +37,14 @@ export function Products() {
               className="group rounded-3xl border border-border/60 bg-background p-5 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_28px_56px_-28px_rgba(8,27,53,0.3)]"
             >
               <div className="relative aspect-square overflow-hidden rounded-2xl bg-secondary">
-                <Image
-                  src="/product-vial.png"
-                  alt={product.name}
-                  fill
-                  className="object-contain p-6 transition-transform duration-500 group-hover:scale-105"
-                />
-                <span className="absolute left-3 top-3 rounded-full bg-primary/5 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105">
+                  <VialImage
+                    name={product.name}
+                    catNo=""
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                </div>
+                <span className="absolute left-3 top-3 z-10 rounded-full bg-primary/5 px-2.5 py-1 text-[11px] font-semibold text-primary">
                   {product.purity}
                 </span>
               </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import { VialImage } from '@/components/products/vial-image'
 import { money, type Order } from '@/lib/store'
 
 const STATUS_STEPS: Order['status'][] = ['Processing', 'Shipped', 'Delivered']
@@ -44,13 +44,7 @@ export function OrderDetail({ order, showTracker = false }: { order: Order; show
           {order.items.map((item) => (
             <li key={item.id} className="flex gap-4 py-4">
               <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-secondary">
-                <Image
-                  src={item.image || '/catalog/vial-metabolic.png'}
-                  alt={item.name}
-                  fill
-                  sizes="64px"
-                  className="object-cover"
-                />
+                <VialImage name={item.name} catNo={item.catNo} spec={item.spec} sizes="64px" />
               </div>
               <div className="flex flex-1 items-center justify-between gap-2">
                 <div>

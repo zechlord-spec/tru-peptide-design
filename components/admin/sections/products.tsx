@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import Image from 'next/image'
 import { Plus, Package, Layers, Tag } from 'lucide-react'
+import { VialImage } from '@/components/products/vial-image'
 import { PRODUCTS, CATEGORIES, priceRange } from '@/lib/products-data'
 import {
   SectionHeader,
@@ -84,7 +84,7 @@ export function ProductsSection() {
               <Td>
                 <div className="flex items-center gap-3">
                   <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-border bg-secondary">
-                    <Image src={p.image || '/placeholder.svg'} alt="" fill className="object-cover" sizes="40px" />
+                    <VialImage name={p.name} catNo={p.variants[0]?.catNo ?? ''} showText={false} sizes="40px" />
                   </span>
                   <span className="font-medium">{p.name}</span>
                 </div>

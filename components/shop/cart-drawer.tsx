@@ -1,10 +1,10 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { X, Minus, Plus, ShoppingBag, Trash2, Repeat } from 'lucide-react'
 import { useStore, money } from '@/lib/store'
+import { VialImage } from '@/components/products/vial-image'
 
 function nextShipment(days: number): string {
   const d = new Date()

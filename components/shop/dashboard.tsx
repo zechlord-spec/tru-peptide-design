@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import { VialImage } from '@/components/products/vial-image'
 import {
   Package,
   Heart,
@@ -272,12 +272,10 @@ function ProductGridPanel({
               href={`/products/${p.slug}`}
               className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-secondary"
             >
-              <Image
-                src={p.image || '/placeholder.svg'}
-                alt={p.name}
-                fill
+              <VialImage
+                name={p.name}
+                catNo={p.variants[0]?.catNo ?? ''}
                 sizes="80px"
-                className="object-cover"
               />
             </Link>
             <div className="min-w-0 flex-1">

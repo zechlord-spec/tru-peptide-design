@@ -1,6 +1,6 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { VialImage } from '@/components/products/vial-image'
 import { notFound } from 'next/navigation'
 import {
   ArrowLeft,
@@ -364,12 +364,13 @@ export default async function LibraryDetailPage({
                   className="group flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card shadow-[0_1px_2px_rgba(8,27,53,0.04)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-28px_rgba(8,27,53,0.32)]"
                 >
                   <div className="relative aspect-4/3 overflow-hidden bg-secondary">
-                    <Image
-                      src={p.image || '/placeholder.svg'}
-                      alt={`${p.name} research vial`}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
+                    <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105">
+                      <VialImage
+                        name={p.name}
+                        catNo={p.variants[0]?.catNo ?? ''}
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                    </div>
                   </div>
                   <div className="flex flex-1 flex-col p-6">
                     <span className="text-xs font-medium text-muted-foreground">{p.compoundType}</span>

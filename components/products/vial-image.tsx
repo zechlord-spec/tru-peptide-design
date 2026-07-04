@@ -7,6 +7,8 @@ type VialImageProps = {
   spec?: string
   /** Show SKU line on the label. Default false to keep the label clean. */
   showSku?: boolean
+  /** Render the label overlay. Set false for tiny thumbnails where text is illegible. */
+  showText?: boolean
   /** Background treatment behind the vial. Defaults to the studio light tone. */
   className?: string
   priority?: boolean
@@ -29,6 +31,7 @@ export function VialImage({
   catNo,
   spec,
   showSku = false,
+  showText = true,
   className,
   priority = false,
   sizes = '(max-width: 768px) 50vw, 25vw',
@@ -56,6 +59,7 @@ export function VialImage({
         />
 
         {/* Frosted pharmaceutical label, positioned on the vial body */}
+        {showText ? (
         <div
           className="absolute left-1/2 top-[57%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[2cqw] border border-[#0a1f3c]/10 bg-white/92 shadow-[0_1cqw_3cqw_rgba(10,31,60,0.18)] backdrop-blur-[0.5px]"
           style={{ width: '74%' }}
@@ -107,6 +111,7 @@ export function VialImage({
             ) : null}
           </div>
         </div>
+        ) : null}
       </div>
     </div>
   )

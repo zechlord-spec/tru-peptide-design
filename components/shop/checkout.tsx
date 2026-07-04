@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import { VialImage } from '@/components/products/vial-image'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -321,13 +321,7 @@ export function Checkout() {
               {items.map((item) => (
                 <li key={item.id} className="flex gap-3">
                   <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl bg-secondary">
-                    <Image
-                      src={item.image || '/catalog/vial-metabolic.png'}
-                      alt={item.name}
-                      fill
-                      sizes="56px"
-                      className="object-cover"
-                    />
+                    <VialImage name={item.name} catNo={item.catNo} spec={item.spec} sizes="56px" />
                     <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                       {item.qty}
                     </span>
