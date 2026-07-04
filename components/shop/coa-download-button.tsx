@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Download, Check } from 'lucide-react'
 import { useStore } from '@/lib/store'
+import { vialLabel } from '@/lib/products-data'
 
 type Variant = { catNo: string; spec: string }
 
@@ -19,14 +20,15 @@ export function CoaDownloadButton({
   const [done, setDone] = useState(false)
 
   function handleDownload() {
-    logCoaDownload({ slug, name, catNo: variant.catNo, spec: variant.spec })
+    const vialSpec = vialLabel(variant.spec)
+    logCoaDownload({ slug, name, catNo: variant.catNo, spec: vialSpec })
     // Generate a lightweight text COA on the fly so the download is real.
     const body = [
       'TRU PEPTIDE — CERTIFICATE OF ANALYSIS',
       '=======================================',
       `Compound: ${name}`,
       `Catalog No: ${variant.catNo}`,
-      `Specification: ${variant.spec}`,
+      `Specification: ${vialSpec}`,
       `Lot: LOT-${Date.now().toString(36).toUpperCase()}`,
       '',
       'Identity (Mass Spectrometry): CONFIRMED',
