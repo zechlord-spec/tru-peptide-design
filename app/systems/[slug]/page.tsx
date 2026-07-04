@@ -13,7 +13,11 @@ import {
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { FaqAccordion } from '@/components/systems/faq-accordion'
+import { SystemRecommendations } from '@/components/systems/system-recommendations'
 import { SYSTEMS, getSystem } from '@/lib/systems-data'
+
+// Recommendations read admin overrides from the database at request time.
+export const dynamic = 'force-dynamic'
 
 export function generateStaticParams() {
   return SYSTEMS.map((s) => ({ slug: s.slug }))
@@ -187,54 +191,25 @@ export default async function SystemPage({
         </div>
       </section>
 
-      {/* Suggested Compounds */}
+      {/* Recommended Stacks + ranked products (tag-driven) */}
       <section id="compounds" className="px-4 py-16">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div className="max-w-xl">
               <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-accent">
                 <FlaskConical className="h-4 w-4" />
-                Suggested Compounds
+                {system.trademark} Protocol
               </span>
               <h2 className="mt-4 text-balance font-heading text-3xl font-bold text-primary md:text-4xl">
-                Compounds studied in this system
+                Build your regimen
               </h2>
+              <p className="mt-4 text-pretty text-lg leading-relaxed text-muted-foreground">
+                Every product tagged for {system.name} is included below, ranked by popularity and
+                rating. Compare options and add what fits your goals.
+              </p>
             </div>
           </div>
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {system.compounds.map((compound) => (
-              <article
-                key={compound.name}
-                className="group flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-28px_rgba(8,27,53,0.28)]"
-              >
-                <div className="relative mb-5 aspect-square overflow-hidden rounded-2xl bg-secondary">
-                  <Image
-                    src="/product-vial.png"
-                    alt={compound.name}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-                  {compound.type}
-                </p>
-                <div className="mt-2 flex items-baseline justify-between">
-                  <h3 className="font-heading text-xl font-bold text-primary">
-                    {compound.name}
-                  </h3>
-                  <span className="font-heading text-lg font-bold text-primary">
-                    {compound.price}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  className="btn-premium mt-5 flex w-full items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
-                >
-                  Add to cart
-                </button>
-              </article>
-            ))}
-          </div>
+          <SystemRecommendations systemSlug={system.slug} systemName={system.name} />
         </div>
       </section>
 
