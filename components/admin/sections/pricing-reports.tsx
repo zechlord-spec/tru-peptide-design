@@ -7,6 +7,7 @@ import {
   TrendingUp,
   TrendingDown,
   AlertTriangle,
+  ShieldAlert,
   RefreshCw,
   Clock,
 } from 'lucide-react'
@@ -86,8 +87,9 @@ function ChangeTable({
   )
 }
 
-function ReviewTable({ rows }: { rows: PricingChange[] }) {
-  if (rows.length === 0) return <EmptyState message="Nothing needs manual review. All prices are within targets." />
+function ReviewTable({ rows, emptyLabel }: { rows: PricingChange[]; emptyLabel?: string }) {
+  if (rows.length === 0)
+    return <EmptyState message={emptyLabel ?? 'Nothing needs manual review. All prices are within targets.'} />
   return (
     <TableCard>
       <thead>
@@ -177,10 +179,11 @@ export function PricingReportsSection() {
 
       {latest && (
         <>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
             <StatCard label="Products updated" value={latest.productsUpdated} icon={RefreshCw} />
             <StatCard label="Price increases" value={latest.increasesCount} icon={TrendingUp} />
             <StatCard label="Price decreases" value={latest.decreasesCount} icon={TrendingDown} />
+            <StatCard label="Margin warnings" value={latest.marginWarningsCount} icon={ShieldAlert} />
             <StatCard label="Need manual review" value={latest.reviewCount} icon={AlertTriangle} />
           </div>
 
@@ -195,6 +198,14 @@ export function PricingReportsSection() {
               Requires manual review
             </h2>
             <ReviewTable rows={latest.needsReview} />
+          </div>
+
+          <div className="space-y-3">
+            <h2 className="flex items-center gap-2 font-heading text-lg font-semibold text-foreground">
+              <ShieldAlert className="h-5 w-5 text-amber-600" />
+              Margin warnings
+            </h2>
+            <ReviewTable rows={latest.marginWarnings} emptyLabel="No margin warnings. Every product is at or above the 70% minimum margin." />
           </div>
 
           <div className="space-y-3">

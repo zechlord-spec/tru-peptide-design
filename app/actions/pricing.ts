@@ -12,8 +12,10 @@ import {
   getReviewQueue,
   getSettings,
   refreshAllPricing,
+  setGlobalSalePercent,
   setManualPrice,
   setPricingMode,
+  setProductSalePercent,
   updateSupplierCost,
 } from '@/lib/pricing/service'
 
@@ -38,6 +40,19 @@ export async function setPricingModeAction(mode: PricingMode) {
 
 export async function setManualPriceAction(slug: string, variantKey: string, price: number) {
   await setManualPrice(slug, variantKey, price)
+  revalidateStorefront()
+}
+
+/** Site-wide promotional sale percentage. `percent` is 0..100. */
+export async function setGlobalSalePercentAction(percent: number) {
+  const updated = await setGlobalSalePercent((percent || 0) / 100)
+  revalidateStorefront()
+  return { updated }
+}
+
+/** Per-product promotional override. `percent` is 0..100, or null to clear. */
+export async function setProductSalePercentAction(slug: string, variantKey: string, percent: number | null) {
+  await setProductSalePercent(slug, variantKey, percent == null ? null : percent / 100)
   revalidateStorefront()
 }
 
@@ -74,6 +89,7 @@ export async function getPricingDashboardAction() {
     rows,
     activeMode: settings.activeMode as PricingMode,
     markupMultiplier: settings.markupMultiplier,
+    salePercentOff: settings.salePercentOff,
     updatedAt: settings.updatedAt.toISOString(),
   }
 }

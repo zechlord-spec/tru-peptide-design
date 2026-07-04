@@ -58,6 +58,9 @@ export const pricingSettings = pgTable('pricing_settings', {
   id: integer('id').primaryKey().default(1),
   activeMode: text('active_mode').notNull().default('market'),
   markupMultiplier: numeric('markup_multiplier', { mode: 'number' }).notNull().default(6),
+  // Site-wide promotional discount (fraction 0..1) applied in Promotional Sale
+  // mode, unless a product sets its own sale_percent_off override.
+  salePercentOff: numeric('sale_percent_off', { mode: 'number' }).notNull().default(0),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
@@ -94,13 +97,17 @@ export const pricingReports = pgTable('pricing_reports', {
   increasesCount: integer('increases_count').notNull().default(0),
   decreasesCount: integer('decreases_count').notNull().default(0),
   reviewCount: integer('review_count').notNull().default(0),
+  marginWarningsCount: integer('margin_warnings_count').notNull().default(0),
   increases: jsonb('increases').$type<PricingChange[]>().notNull().default([]),
   decreases: jsonb('decreases').$type<PricingChange[]>().notNull().default([]),
   needsReview: jsonb('needs_review').$type<PricingChange[]>().notNull().default([]),
+  marginWarnings: jsonb('margin_warnings').$type<PricingChange[]>().notNull().default([]),
   status: text('status').notNull().default('success'),
   notes: text('notes'),
 })
 
 export type PricingRow = typeof peptidePricing.$inferSelect
 export type PricingReport = typeof pricingReports.$inferSelect
-export type PricingMode = 'market' | 'markup6x' | 'manual'
+// market = Smart Dynamic (default), markup6x = Fixed Markup, manual = Manual
+// Price, promo = Promotional Sale Pricing.
+export type PricingMode = 'market' | 'markup6x' | 'manual' | 'promo'

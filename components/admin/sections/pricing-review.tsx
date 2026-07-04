@@ -54,15 +54,15 @@ export function PricingReviewSection() {
     <div className="space-y-6">
       <SectionHeader
         title="Pricing Review Queue"
-        description="Products whose calculated market price would fall below a 60% gross margin (retail under wholesale × 2.5). These are held for manual review instead of being auto-updated."
+        description="Products the engine could not safely reprice — the target price would break the 70% minimum gross margin or fall more than 10% below the lowest competitor. These are held for manual review instead of being auto-updated."
       />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
         <StatCard label="Awaiting review" value={rows.length} icon={ShieldAlert} />
-        <StatCard label="Margin floor" value="60%" icon={ShieldAlert} hint="Retail ≥ wholesale × 2.5" />
+        <StatCard label="Margin floor" value="70%" icon={ShieldAlert} hint="Minimum gross margin" />
         <StatCard
-          label="Held below floor"
-          value={rows.filter((r) => (r.proposedMarginPct ?? 0) < 60).length}
+          label="Below target margin"
+          value={rows.filter((r) => (r.proposedMarginPct ?? 100) < 70).length}
           icon={ShieldAlert}
         />
       </div>
@@ -70,7 +70,7 @@ export function PricingReviewSection() {
       {isLoading && <EmptyState message="Loading review queue…" />}
 
       {!isLoading && rows.length === 0 && (
-        <EmptyState message="Nothing to review. Every product currently meets the 60% margin floor." />
+        <EmptyState message="Nothing to review. Every product currently meets the 70% margin floor and the competitor price floor." />
       )}
 
       {rows.length > 0 && (
@@ -80,10 +80,10 @@ export function PricingReviewSection() {
               <Th>Product</Th>
               <Th>Vial</Th>
               <Th className="text-right">Wholesale</Th>
-              <Th className="text-right">Floor (×2.5)</Th>
+              <Th className="text-right">Margin floor</Th>
               <Th className="text-right">Current price</Th>
-              <Th className="text-right">Market price</Th>
-              <Th className="text-right">Market margin</Th>
+              <Th className="text-right">Proposed</Th>
+              <Th className="text-right">Proposed margin</Th>
               <Th>Flagged</Th>
               <Th className="text-right">Actions</Th>
             </tr>
@@ -119,11 +119,11 @@ export function PricingReviewSection() {
                         type="button"
                         onClick={() => act('approve', r.slug, r.variantKey)}
                         disabled={busy || r.proposedPrice == null}
-                        title="Apply the market price anyway (accept the lower margin)"
+                        title="Apply the proposed price (accept the lower margin)"
                         className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
                       >
                         {busy ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
-                        Apply market
+                        Apply proposed
                       </button>
                       <button
                         type="button"
