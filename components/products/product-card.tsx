@@ -3,7 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { FlaskConical, FileText, Eye, ArrowUpRight } from 'lucide-react'
-import { type Product, priceRange } from '@/lib/products-data'
+import { type Product } from '@/lib/products-data'
+import { retailRange } from '@/lib/pricing/pricing-service'
 import { FavoriteButton } from '@/components/shop/favorite-button'
 
 type ProductCardProps = {
@@ -63,8 +64,13 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
               {product.name}
             </h3>
           </div>
-          <span className="whitespace-nowrap font-heading text-base font-semibold text-primary">
-            {priceRange(product)}
+          <span className="flex flex-col items-end whitespace-nowrap text-right">
+            <span className="font-heading text-base font-semibold text-primary">
+              {retailRange(product)}
+            </span>
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              per vial
+            </span>
           </span>
         </div>
 

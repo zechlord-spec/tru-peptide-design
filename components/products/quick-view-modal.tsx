@@ -3,7 +3,8 @@
 import { useEffect } from 'react'
 import Image from 'next/image'
 import { X, FlaskConical, FileText, Target, Layers } from 'lucide-react'
-import { type Product } from '@/lib/products-data'
+import { type Product, vialLabel } from '@/lib/products-data'
+import { retailUnit, formatUSD } from '@/lib/pricing/pricing-service'
 
 type QuickViewModalProps = {
   product: Product | null
@@ -114,8 +115,8 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
           <div className="mt-6 overflow-hidden rounded-xl border border-border">
             <div className="grid grid-cols-[1fr_2fr_auto] gap-2 border-b border-border bg-secondary px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               <span>Cat. No.</span>
-              <span>Specification</span>
-              <span className="text-right">Per Box</span>
+              <span>Vial</span>
+              <span className="text-right">Per Vial</span>
             </div>
             <ul className="divide-y divide-border">
               {product.variants.map((v) => (
@@ -124,8 +125,10 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
                   className="grid grid-cols-[1fr_2fr_auto] items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:bg-secondary/50"
                 >
                   <span className="font-mono text-xs text-muted-foreground">{v.catNo}</span>
-                  <span className="text-foreground">{v.spec}</span>
-                  <span className="text-right font-heading font-semibold text-primary">${v.price}</span>
+                  <span className="text-foreground">{vialLabel(v.spec)}</span>
+                  <span className="text-right font-heading font-semibold text-primary">
+                    {formatUSD(retailUnit(v.catNo))}
+                  </span>
                 </li>
               ))}
             </ul>
