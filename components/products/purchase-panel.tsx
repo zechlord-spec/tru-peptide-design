@@ -17,7 +17,8 @@ import {
 } from 'lucide-react'
 import type { Product } from '@/lib/products-data'
 import { vialLabel } from '@/lib/products-data'
-import { retailUnit } from '@/lib/pricing/pricing-service'
+import { useRetailSnapshot } from '@/lib/pricing/pricing-context'
+import { retailUnitFrom } from '@/lib/pricing/format'
 import { useStore, money, AUTOSHIP_DISCOUNT, type PurchaseType } from '@/lib/store'
 
 const FREQUENCIES = [
@@ -60,8 +61,9 @@ type PanelState = {
 
 function PurchaseOptions(s: PanelState) {
   const { product } = s
+  const snapshot = useRetailSnapshot()
   const variant = product.variants.find((v) => v.catNo === s.selected) ?? product.variants[0]
-  const base = retailUnit(variant.catNo)
+  const base = retailUnitFrom(snapshot, variant.catNo)
   const autoshipUnit = Math.round(base * (1 - AUTOSHIP_DISCOUNT))
   const savingsPct = Math.round(AUTOSHIP_DISCOUNT * 100)
 
@@ -92,7 +94,7 @@ function PurchaseOptions(s: PanelState) {
                     <span className="font-medium">{vialLabel(v.spec)}</span>
                     <span className="font-mono text-[10px] text-muted-foreground">{v.catNo}</span>
                   </span>
-                  <span className="font-heading text-sm font-semibold">{money(retailUnit(v.catNo))}</span>
+                  <span className="font-heading text-sm font-semibold">{money(retailUnitFrom(snapshot, v.catNo))}</span>
                 </button>
               )
             })}
@@ -307,6 +309,7 @@ function RadioDot({ active, accent }: { active: boolean; accent?: boolean }) {
 
 export function PurchasePanel({ product }: { product: Product }) {
   const { addItem } = useStore()
+  const snapshot = useRetailSnapshot()
   const [purchaseType, setPurchaseType] = useState<PurchaseType>('autoship')
   const [selected, setSelected] = useState(product.variants[0].catNo)
   const [qty, setQty] = useState(1)
@@ -316,7 +319,7 @@ export function PurchasePanel({ product }: { product: Product }) {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const variant = product.variants.find((v) => v.catNo === selected) ?? product.variants[0]
-  const base = retailUnit(variant.catNo)
+  const base = retailUnitFrom(snapshot, variant.catNo)
   const isAuto = purchaseType === 'autoship'
   const unit = isAuto ? Math.round(base * (1 - AUTOSHIP_DISCOUNT)) : base
   const total = unit * qty

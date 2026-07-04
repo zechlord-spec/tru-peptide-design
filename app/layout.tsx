@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter, Space_Grotesk } from 'next/font/google'
 import { Providers } from '@/components/shop/providers'
+import { getRetailSnapshot } from '@/lib/pricing/service'
 import './globals.css'
 
 const inter = Inter({
@@ -28,15 +29,16 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const pricing = await getRetailSnapshot()
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} bg-background`}>
       <body className="font-sans antialiased">
-        <Providers>{children}</Providers>
+        <Providers pricing={pricing}>{children}</Providers>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

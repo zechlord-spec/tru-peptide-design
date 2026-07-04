@@ -4,7 +4,8 @@ import { useEffect } from 'react'
 import Image from 'next/image'
 import { X, FlaskConical, FileText, Target, Layers } from 'lucide-react'
 import { type Product, vialLabel } from '@/lib/products-data'
-import { retailUnit, formatUSD } from '@/lib/pricing/pricing-service'
+import { useRetailSnapshot, formatUSD } from '@/lib/pricing/pricing-context'
+import { retailUnitFrom } from '@/lib/pricing/format'
 
 type QuickViewModalProps = {
   product: Product | null
@@ -12,6 +13,7 @@ type QuickViewModalProps = {
 }
 
 export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
+  const snapshot = useRetailSnapshot()
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
@@ -127,7 +129,7 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
                   <span className="font-mono text-xs text-muted-foreground">{v.catNo}</span>
                   <span className="text-foreground">{vialLabel(v.spec)}</span>
                   <span className="text-right font-heading font-semibold text-primary">
-                    {formatUSD(retailUnit(v.catNo))}
+                    {formatUSD(retailUnitFrom(snapshot, v.catNo))}
                   </span>
                 </li>
               ))}

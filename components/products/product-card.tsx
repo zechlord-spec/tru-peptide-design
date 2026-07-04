@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FlaskConical, FileText, Eye, ArrowUpRight } from 'lucide-react'
 import { type Product } from '@/lib/products-data'
-import { retailRange } from '@/lib/pricing/pricing-service'
+import { useRetailRange } from '@/lib/pricing/pricing-context'
 import { FavoriteButton } from '@/components/shop/favorite-button'
 
 type ProductCardProps = {
@@ -13,6 +13,7 @@ type ProductCardProps = {
 }
 
 export function ProductCard({ product, onQuickView }: ProductCardProps) {
+  const retailRange = useRetailRange(product)
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10">
       {/* Image */}
@@ -66,7 +67,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
           </div>
           <span className="flex flex-col items-end whitespace-nowrap text-right">
             <span className="font-heading text-base font-semibold text-primary">
-              {retailRange(product)}
+              {retailRange}
             </span>
             <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
               per vial

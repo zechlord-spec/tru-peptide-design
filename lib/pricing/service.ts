@@ -1,5 +1,5 @@
 import 'server-only'
-import { and, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { peptidePricing, pricingRefreshLog, pricingSettings } from '@/lib/db/schema'
 import type { PricingMode, PricingRow } from '@/lib/db/schema'
