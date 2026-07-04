@@ -1,11 +1,11 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { FlaskConical, FileText, Eye, ArrowUpRight } from 'lucide-react'
 import { type Product } from '@/lib/products-data'
 import { useRetailRange } from '@/lib/pricing/pricing-context'
 import { FavoriteButton } from '@/components/shop/favorite-button'
+import { VialImage } from '@/components/products/vial-image'
 
 type ProductCardProps = {
   product: Product
@@ -18,13 +18,13 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10">
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
-        <Image
-          src={product.image || '/placeholder.svg'}
-          alt={product.name}
-          fill
-          sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-        />
+        <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">
+          <VialImage
+            name={product.name}
+            catNo={product.variants[0]?.catNo ?? ''}
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
+        </div>
 
         {/* Research Only badge */}
         <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground backdrop-blur-sm">

@@ -192,6 +192,30 @@
   animation: float-slow 9s ease-in-out infinite;
 }
 
+/* Premium hero molecule: slow vertical float + very subtle rotation, ~14s loop */
+@keyframes float-hero {
+  0% {
+    transform: translateY(0) rotate(-1.2deg);
+  }
+  50% {
+    transform: translateY(-26px) rotate(1.2deg);
+  }
+  100% {
+    transform: translateY(0) rotate(-1.2deg);
+  }
+}
+
+.animate-float-hero {
+  animation: float-hero 14s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-hero {
+    animation: none;
+  }
+}
+
 .animate-float-medium {
   animation: float-medium 6s ease-in-out infinite;
 }

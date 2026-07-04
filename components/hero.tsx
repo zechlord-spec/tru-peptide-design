@@ -1,22 +1,28 @@
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
-import { FloatingMolecules } from '@/components/animations/floating-molecules'
 
 export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden px-4 pb-20 pt-36 md:pt-44">
-      <FloatingMolecules />
-
-      {/* Floating molecular artwork */}
-      <div className="pointer-events-none absolute -right-24 top-28 hidden w-[44rem] max-w-[56vw] opacity-90 lg:block">
-        <div className="animate-float-slow">
+      {/* Single premium molecular focal point, floating directly on the background */}
+      <div className="pointer-events-none absolute -right-16 top-24 hidden w-[42rem] max-w-[52vw] lg:block xl:-right-8">
+        {/* Soft blue glow beneath the molecule for depth */}
+        <div
+          aria-hidden
+          className="absolute left-1/2 top-1/2 h-[36rem] w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60 blur-3xl"
+          style={{
+            background:
+              'radial-gradient(circle, rgba(37,99,164,0.45) 0%, rgba(37,99,164,0.18) 40%, rgba(37,99,164,0) 70%)',
+          }}
+        />
+        <div className="animate-float-hero">
           <Image
-            src="/molecule-hero.png"
-            alt=""
-            width={900}
-            height={900}
+            src="/hero-molecule.png"
+            alt="Translucent glass peptide molecule"
+            width={1024}
+            height={1024}
             priority
-            className="h-auto w-full drop-shadow-[0_40px_80px_rgba(8,27,53,0.25)]"
+            className="relative h-auto w-full [mask-image:radial-gradient(circle_at_center,#000_55%,transparent_74%)] [-webkit-mask-image:radial-gradient(circle_at_center,#000_55%,transparent_74%)]"
           />
         </div>
       </div>
@@ -24,12 +30,12 @@ export function Hero() {
       <div className="relative mx-auto max-w-7xl">
         <div className="max-w-2xl animate-fade-up">
           <Image
-            src="/tru-peptide-logo.png"
+            src="/tru-peptide-logo-mark.png"
             alt="TRU PEPTIDE"
-            width={72}
-            height={72}
+            width={288}
+            height={140}
             priority
-            className="h-16 w-16 object-contain"
+            className="h-16 w-auto object-contain"
           />
 
           <span className="mt-8 inline-flex items-center gap-2 rounded-full border border-primary/15 bg-card/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/70">

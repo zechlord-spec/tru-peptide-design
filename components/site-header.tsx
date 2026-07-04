@@ -41,7 +41,7 @@ export function SiteHeader() {
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2.5" aria-label="TRU PEPTIDE home">
             <Image
-              src="/tru-peptide-logo.png"
+              src="/tru-peptide-icon.png"
               alt="TRU PEPTIDE"
               width={40}
               height={40}

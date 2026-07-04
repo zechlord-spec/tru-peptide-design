@@ -95,12 +95,11 @@ export function CartDrawer() {
               {items.map((item) => (
                 <li key={item.id} className="flex gap-4 py-5">
                   <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-secondary">
-                    <Image
-                      src={item.image || '/catalog/vial-metabolic.png'}
-                      alt={item.name}
-                      fill
+                    <VialImage
+                      name={item.name}
+                      catNo={item.catNo}
+                      spec={item.spec}
                       sizes="80px"
-                      className="object-cover"
                     />
                   </div>
                   <div className="flex flex-1 flex-col">

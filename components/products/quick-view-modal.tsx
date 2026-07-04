@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
-import Image from 'next/image'
 import { X, FlaskConical, FileText, Target, Layers } from 'lucide-react'
 import { type Product, vialLabel } from '@/lib/products-data'
+import { VialImage } from '@/components/products/vial-image'
 import { useRetailSnapshot, formatUSD } from '@/lib/pricing/pricing-context'
 import { retailUnitFrom } from '@/lib/pricing/format'
 
@@ -58,12 +58,11 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
 
         {/* Image side */}
         <div className="relative aspect-square w-full shrink-0 bg-secondary md:aspect-auto md:w-2/5">
-          <Image
-            src={product.image || '/placeholder.svg'}
-            alt={product.name}
-            fill
+          <VialImage
+            name={product.name}
+            catNo={product.variants[0]?.catNo ?? ''}
+            spec={product.variants[0]?.spec}
             sizes="(max-width: 768px) 100vw, 40vw"
-            className="object-cover"
           />
           <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground backdrop-blur-sm">
             <FlaskConical className="h-3 w-3" aria-hidden="true" />

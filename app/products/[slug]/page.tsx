@@ -20,6 +20,7 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { FaqAccordion } from '@/components/systems/faq-accordion'
 import { PurchasePanel } from '@/components/products/purchase-panel'
+import { VialImage } from '@/components/products/vial-image'
 import { FavoriteButton } from '@/components/shop/favorite-button'
 import { ViewTracker } from '@/components/shop/view-tracker'
 import { CoaDownloadButton } from '@/components/shop/coa-download-button'
@@ -97,13 +98,13 @@ export default async function ProductPage({
             {/* Left: gallery + product information */}
             <div>
               <div className="relative aspect-square overflow-hidden rounded-[2rem] border border-border/60 bg-secondary shadow-[0_40px_80px_-40px_rgba(8,27,53,0.4)]">
-                <Image
-                  src={product.image || '/placeholder.svg'}
-                  alt={`${product.name} research vial`}
-                  fill
+                <VialImage
+                  name={product.name}
+                  catNo={product.variants[0]?.catNo ?? ''}
+                  spec={product.variants[0]?.spec}
+                  showSku
                   priority
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
                 />
                 <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary-foreground backdrop-blur-sm">
                   <FlaskConical className="h-3.5 w-3.5" aria-hidden="true" />
@@ -438,14 +439,14 @@ export default async function ProductPage({
                   href={`/products/${rel.slug}`}
                   className="group flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-28px_rgba(8,27,53,0.28)]"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
-                    <Image
-                      src={rel.image || '/placeholder.svg'}
-                      alt={rel.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
+                    <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
+                      <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105">
+                        <VialImage
+                          name={rel.name}
+                          catNo={rel.variants[0]?.catNo ?? ''}
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                        />
+                      </div>
                   </div>
                   <div className="flex flex-1 flex-col p-6">
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">

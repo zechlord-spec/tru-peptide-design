@@ -15,7 +15,7 @@ export default function CheckoutPage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 lg:px-8">
           <Link href="/" className="flex items-center gap-2.5" aria-label="TRU PEPTIDE home">
             <Image
-              src="/tru-peptide-logo.png"
+              src="/tru-peptide-icon.png"
               alt="TRU PEPTIDE"
               width={36}
               height={36}

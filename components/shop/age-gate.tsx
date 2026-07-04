@@ -35,7 +35,7 @@ export function AgeGate() {
       <div className="w-full max-w-md overflow-hidden rounded-3xl bg-card shadow-2xl">
         <div className="flex flex-col items-center px-8 pb-8 pt-10 text-center">
           <Image
-            src="/tru-peptide-logo.png"
+            src="/tru-peptide-icon.png"
             alt="TRU PEPTIDE"
             width={56}
             height={56}

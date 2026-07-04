@@ -38,7 +38,7 @@ export function SiteFooter() {
           <div>
             <div className="flex items-center gap-2.5">
               <Image
-                src="/tru-peptide-logo.png"
+                src="/tru-peptide-icon.png"
                 alt="TRU PEPTIDE"
                 width={40}
                 height={40}
