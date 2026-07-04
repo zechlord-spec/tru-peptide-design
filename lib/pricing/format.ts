@@ -23,3 +23,18 @@ export function retailRangeFrom(snapshot: RetailSnapshot, product: Product): str
   const max = Math.max(...prices)
   return min === max ? formatUSD(min) : `${formatUSD(min)} – ${formatUSD(max)}`
 }
+
+// Cheapest priced variant for a product ("Starting at" price + Add to Cart target).
+export function retailStartingFrom(
+  snapshot: RetailSnapshot,
+  product: Product,
+): { catNo: string; spec: string; price: number } | null {
+  let best: { catNo: string; spec: string; price: number } | null = null
+  for (const v of product.variants) {
+    const price = snapshot[v.catNo] ?? 0
+    if (price > 0 && (best === null || price < best.price)) {
+      best = { catNo: v.catNo, spec: v.spec, price }
+    }
+  }
+  return best
+}

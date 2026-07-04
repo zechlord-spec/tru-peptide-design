@@ -111,3 +111,61 @@ export type PricingReport = typeof pricingReports.$inferSelect
 // market = Smart Dynamic (default), markup6x = Fixed Markup, manual = Manual
 // Price, promo = Promotional Sale Pricing.
 export type PricingMode = 'market' | 'markup6x' | 'manual' | 'promo'
+
+// ---------------------------------------------------------------------------
+// Tru Systems recommendation engine — admin overrides.
+// All tables are OVERLAYS on top of the code-level defaults in lib/catalog.
+// An empty database is fully valid: the engine falls back to defaults.
+// ---------------------------------------------------------------------------
+
+// Per-product metadata overrides. `tags` (when non-null) fully replaces the
+// code default tag set for that product. `featured` boosts ranking everywhere.
+export const productMeta = pgTable('product_meta', {
+  productSlug: text('product_slug').primaryKey(),
+  tags: jsonb('tags').$type<string[] | null>(),
+  featured: boolean('featured').notNull().default(false),
+  benefit: text('benefit'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+// Per-(system, product) overlay: force-include/exclude a product in a system,
+// pin it to the top, and control its order among pinned items.
+export const systemProducts = pgTable(
+  'system_products',
+  {
+    id: serial('id').primaryKey(),
+    systemSlug: text('system_slug').notNull(),
+    productSlug: text('product_slug').notNull(),
+    included: boolean('included').notNull().default(true),
+    pinned: boolean('pinned').notNull().default(false),
+    position: integer('position').notNull().default(0),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    uniqSystemProduct: unique().on(t.systemSlug, t.productSlug),
+  }),
+)
+
+// Admin-curated "Recommended Stacks" shown above the individual products.
+export const truStacks = pgTable('tru_stacks', {
+  id: serial('id').primaryKey(),
+  systemSlug: text('system_slug').notNull(),
+  title: text('title').notNull(),
+  description: text('description'),
+  productSlugs: jsonb('product_slugs').$type<string[]>().notNull().default([]),
+  position: integer('position').notNull().default(0),
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+// Optional educational note per Tru System (markdown-free plain text).
+export const systemNotes = pgTable('system_notes', {
+  systemSlug: text('system_slug').primaryKey(),
+  note: text('note').notNull().default(''),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+export type ProductMetaRow = typeof productMeta.$inferSelect
+export type SystemProductRow = typeof systemProducts.$inferSelect
+export type TruStackRow = typeof truStacks.$inferSelect
+export type SystemNoteRow = typeof systemNotes.$inferSelect
