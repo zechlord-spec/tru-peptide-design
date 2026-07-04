@@ -29,10 +29,17 @@ export const peptidePricing = pgTable(
     confidenceScore: numeric('confidence_score', { mode: 'number' }).notNull().default(0),
     manualPrice: numeric('manual_price', { mode: 'number' }),
     retailPrice: numeric('retail_price', { mode: 'number' }).notNull().default(0),
+    // --- Smart Dynamic Pricing engine outputs (for admin display + reports) ---
+    strategyUsed: text('strategy_used').notNull().default('Smart Dynamic'),
+    targetPrice: numeric('target_price', { mode: 'number' }),
+    dynamicDiscountPct: numeric('dynamic_discount_pct', { mode: 'number' }),
+    // Per-product promotional discount override (fraction 0..1). Null = use the
+    // site-wide sale percentage from pricing_settings.
+    salePercentOff: numeric('sale_percent_off', { mode: 'number' }),
     // --- Pricing protection / manual-review queue ---
-    // When the market-derived price would fall below the margin floor
-    // (retail < wholesale × 2.5, i.e. < 60% gross margin) the refresh does NOT
-    // auto-apply it. Instead the row is flagged here for an admin to review.
+    // When the strategy's target price would break a hard safety rule (below the
+    // 70% gross-margin floor, or more than 10% below the lowest competitor) the
+    // scheduled refresh does NOT auto-apply it — the row is flagged here.
     needsReview: boolean('needs_review').notNull().default(false),
     reviewReason: text('review_reason'),
     proposedPrice: numeric('proposed_price', { mode: 'number' }),
