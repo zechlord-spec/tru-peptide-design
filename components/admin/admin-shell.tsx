@@ -39,9 +39,6 @@ import { AnalyticsSection } from './sections/analytics'
 import { PricingDashboardSection } from './sections/pricing-dashboard'
 import { MarketIntelligenceSection } from './sections/market-intelligence'
 import { PricingReportsSection } from './sections/pricing-reports'
-import { PricingDashboardSection } from './sections/pricing-dashboard'
-import { MarketIntelligenceSection } from './sections/market-intelligence'
-import { PricingReportsSection } from './sections/pricing-reports'
 
 type NavItem = { id: string; label: string; icon: LucideIcon; group: string }
 
