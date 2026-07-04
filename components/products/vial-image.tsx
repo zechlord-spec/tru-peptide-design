@@ -5,26 +5,39 @@ type VialImageProps = {
   name: string
   catNo: string
   spec?: string
-  /** Show SKU line on the label. Default false to keep the label clean. */
+  /** Show the SKU line on the label. Default false to match the approved design. */
   showSku?: boolean
-  /** Render the label overlay. Set false for tiny thumbnails where text is illegible. */
+  /** Render the dynamic label text. Set false for tiny thumbnails where text is illegible. */
   showText?: boolean
-  /** Background treatment behind the vial. Defaults to the studio light tone. */
+  /**
+   * Real product photograph. When supplied, it is displayed exactly as-is and
+   * the dynamic template overlay is skipped. This is the swap point for future
+   * studio photography — set a per-product photo (or replace the shared
+   * `/vial-template.png` asset) and nothing else in the app has to change.
+   */
+  photo?: string
   className?: string
   priority?: boolean
   sizes?: string
 }
 
+/** Approved placeholder vial artwork (blue cap, clear glass, blank white label). */
+const VIAL_TEMPLATE = '/vial-template.png'
+/** Tru Peptide brand blue used for the strength badge and the footer band. */
+const BRAND_BLUE = '#0b338f'
+
 /**
- * The single source of truth for every product vial across the site.
+ * The single source of truth for every product vial across the storefront.
  *
- * A photorealistic blank vial master image (`/vial-blank.png`) is rendered once
- * and a frosted pharmaceutical label is composited on top: the official Tru
- * Peptide logo (`/tru-peptide-logo-mark.png`) plus dynamic product information.
+ * It renders the approved placeholder vial photograph (`/vial-template.png`)
+ * and composites the official Tru Peptide label on top. The label design —
+ * logo, "99% PURITY", "RESEARCH USE ONLY", "NOT FOR HUMAN CONSUMPTION" and the
+ * "FOR RESEARCH PURPOSES ONLY" footer band — is identical for every product.
+ * Only three fields are dynamic and pulled from the catalog: product name,
+ * strength, and (optionally) SKU.
  *
- * Because the logo is referenced as an asset, updating that single file makes
- * every vial across the site inherit the new branding automatically. The label
- * design is identical for every product; only the injected data changes.
+ * Future studio photography drops in via the `photo` prop or by replacing the
+ * shared template asset — the product catalog and pages never need to change.
  */
 export function VialImage({
   name,
@@ -32,86 +45,121 @@ export function VialImage({
   spec,
   showSku = false,
   showText = true,
+  photo,
   className,
   priority = false,
   sizes = '(max-width: 768px) 50vw, 25vw',
 }: VialImageProps) {
   const label = deriveVialLabel({ name, catNo, spec })
 
-  return (
-    <div
-      className={`absolute inset-0 flex items-center justify-center bg-[#eef1f4] ${className ?? ''}`}
-    >
-      {/* Vial + label share one aspect-locked stage so the label always tracks
-          the vial body regardless of the container size. Container-query units
-          (cqw) keep every label element proportional at any render scale. */}
+  // Future real product photography: show exactly as provided, no overlay.
+  if (photo) {
+    return (
       <div
-        className="relative h-full max-h-full"
-        style={{ aspectRatio: '372 / 820', containerType: 'inline-size' }}
+        className={`absolute inset-0 flex items-center justify-center bg-[#eef1f4] ${className ?? ''}`}
       >
         <Image
-          src="/vial-blank.png"
+          src={photo}
           alt={`${name} vial`}
           fill
           priority={priority}
           sizes={sizes}
           className="object-contain"
         />
+      </div>
+    )
+  }
 
-        {/* Frosted pharmaceutical label, positioned on the vial body */}
-        {showText ? (
+  return (
+    <div
+      className={`absolute inset-0 flex items-center justify-center bg-[#eef1f4] ${className ?? ''}`}
+    >
+      {/* The stage matches the template's intrinsic aspect ratio so the overlaid
+          label always tracks the printed label position at any render size. */}
+      <div className="relative h-full max-h-full" style={{ aspectRatio: '300 / 880' }}>
+        <Image
+          src={VIAL_TEMPLATE}
+          alt={`${name} research vial`}
+          fill
+          priority={priority}
+          sizes={sizes}
+          className="object-contain"
+        />
+
+        {/* Dynamic label — sits exactly over (and fully covers) the placeholder's
+            printed label. Container-query units keep every element proportional. */}
         <div
-          className="absolute left-1/2 top-[57%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[2cqw] border border-[#0a1f3c]/10 bg-white/92 shadow-[0_1cqw_3cqw_rgba(10,31,60,0.18)] backdrop-blur-[0.5px]"
-          style={{ width: '74%' }}
+          className="absolute overflow-hidden rounded-[4cqw] shadow-[0_0.6cqw_2cqw_rgba(6,20,60,0.12)]"
+          style={{
+            left: '6%',
+            width: '88%',
+            top: '35.2%',
+            height: '45.3%',
+            containerType: 'inline-size',
+            background:
+              'linear-gradient(90deg,#e4e7ec 0%,#f6f8fa 13%,#fbfcfd 50%,#f6f8fa 87%,#e4e7ec 100%)',
+          }}
         >
-          {/* Navy accent bar */}
-          <div className="h-[1.6cqw] w-full bg-[#0a1f3c]" />
+          <div className="flex h-full flex-col items-center">
+            <div className="flex flex-1 flex-col items-center px-[7cqw] pt-[7cqw] text-center">
+              {/* Official Tru Peptide logo (exact approved brand mark) */}
+              <div className="relative h-[15cqw] w-[62%]">
+                <Image
+                  src="/tru-peptide-label-logo.png"
+                  alt="Tru Peptide"
+                  fill
+                  sizes="200px"
+                  className="object-contain"
+                />
+              </div>
 
-          <div className="flex flex-col items-center px-[6cqw] py-[5cqw] text-center">
-            {/* Official Tru Peptide logo — the master branding asset */}
-            <div className="relative h-[13cqw] w-[70%]">
-              <Image
-                src="/tru-peptide-logo-mark.png"
-                alt="Tru Peptide"
-                fill
-                sizes="200px"
-                className="object-contain"
-              />
+              {showText ? (
+                <>
+                  {/* Dynamic: product name */}
+                  <p className="mt-[6cqw] text-[13cqw] font-extrabold uppercase leading-[1.02] tracking-tight text-[#0b0b0d]">
+                    {label.name}
+                  </p>
+
+                  {/* Dynamic: strength badge */}
+                  {label.strength ? (
+                    <span
+                      className="mt-[4cqw] inline-block rounded-[1.6cqw] px-[7cqw] py-[1.8cqw] text-[8.5cqw] font-bold uppercase leading-none text-white"
+                      style={{ backgroundColor: BRAND_BLUE }}
+                    >
+                      {label.strength}
+                    </span>
+                  ) : null}
+
+                  {/* Constant descriptors */}
+                  <p className="mt-[5cqw] text-[7cqw] font-semibold uppercase tracking-[0.05em] text-[#2b2b30]">
+                    99% Purity
+                  </p>
+                  <p className="mt-[2.2cqw] text-[6cqw] font-medium uppercase tracking-[0.04em] text-[#33333a]">
+                    Research Use Only
+                  </p>
+                  <p className="mt-[1.4cqw] text-[5.3cqw] font-medium uppercase tracking-[0.03em] text-[#33333a]">
+                    Not For Human Consumption
+                  </p>
+
+                  {/* Optional dynamic SKU */}
+                  {showSku && label.sku ? (
+                    <p className="mt-[2cqw] text-[4.6cqw] font-medium uppercase tracking-[0.08em] text-[#6a6a70]">
+                      SKU {label.sku}
+                    </p>
+                  ) : null}
+                </>
+              ) : null}
             </div>
 
-            {/* Hairline divider */}
-            <div className="my-[3.2cqw] h-px w-[86%] bg-[#0a1f3c]/15" />
-
-            {/* Product name */}
-            <p className="max-w-full truncate text-[5.4cqw] font-semibold leading-tight tracking-tight text-[#0a1f3c]">
-              {label.name}
-            </p>
-
-            {/* Strength */}
-            {label.strength ? (
-              <p className="mt-[1cqw] text-[4.2cqw] font-medium uppercase tracking-[0.12em] text-[#2563a4]">
-                {label.strength}
-              </p>
-            ) : null}
-
-            {/* Research-use descriptor */}
-            <p className="mt-[2.4cqw] text-[2.9cqw] font-medium uppercase tracking-[0.16em] text-[#0a1f3c]/55">
-              For Research Use Only
-            </p>
-
-            {/* Dynamic footer: lot + expiry (SKU optional) */}
-            <div className="mt-[3.4cqw] flex w-full items-center justify-between gap-[2cqw] border-t border-[#0a1f3c]/12 pt-[2.6cqw] text-[2.7cqw] font-medium tracking-wide text-[#0a1f3c]/60">
-              <span>LOT {label.lot}</span>
-              <span>EXP {label.exp}</span>
+            {/* Constant blue footer band */}
+            <div
+              className="mt-auto w-full whitespace-nowrap py-[3.4cqw] text-center text-[4.4cqw] font-semibold uppercase leading-none tracking-[0.1em] text-white"
+              style={{ backgroundColor: BRAND_BLUE }}
+            >
+              For Research Purposes Only
             </div>
-            {showSku && label.sku ? (
-              <p className="mt-[1.4cqw] text-[2.5cqw] tracking-wide text-[#0a1f3c]/45">
-                SKU {label.sku}
-              </p>
-            ) : null}
           </div>
         </div>
-        ) : null}
       </div>
     </div>
   )
