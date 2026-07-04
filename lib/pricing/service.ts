@@ -1,8 +1,8 @@
 import 'server-only'
 import { and, desc, eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
-import { peptidePricing, pricingRefreshLog, pricingSettings } from '@/lib/db/schema'
-import type { PricingMode, PricingRow } from '@/lib/db/schema'
+import { peptidePricing, pricingRefreshLog, pricingReports, pricingSettings } from '@/lib/db/schema'
+import type { PricingChange, PricingMode, PricingReport, PricingRow } from '@/lib/db/schema'
 import {
   PRODUCTS,
   supplierBoxPrice,
@@ -39,6 +39,83 @@ export async function getSettings() {
 
 export async function getAllPricing(): Promise<PricingRow[]> {
   return db.select().from(peptidePricing)
+}
+
+export type DashboardRow = {
+  slug: string
+  productName: string
+  variantKey: string
+  dose: string
+  supplierBoxPrice: number
+  vialsPerBox: number
+  wholesalePerVial: number
+  marketLow: number | null
+  marketHigh: number | null
+  marketAverage: number | null
+  marketMedian: number | null
+  numberOfSources: number
+  confidenceScore: number
+  retailPrice: number
+  manualPrice: number | null
+  differenceFromMarket: number | null
+  differenceFromMarketPct: number | null
+  grossMargin: number
+  marginPct: number
+  belowTargetMargin: boolean // true when NOT at least 20% below market (needs attention)
+  lastUpdated: string
+}
+
+/**
+ * Merge catalog metadata with stored pricing rows into fully-derived,
+ * serializable rows for the admin Pricing Dashboard and Market Intelligence
+ * views. Seeds first so every product has a row.
+ */
+export async function getDashboardRows(): Promise<DashboardRow[]> {
+  await seedPricing()
+  const rows = await getAllPricing()
+  const byKey = new Map(rows.map((r) => [`${r.productSlug}::${r.variantKey}`, r]))
+
+  const out: DashboardRow[] = []
+  for (const product of PRODUCTS) {
+    for (const variant of product.variants) {
+      const row = byKey.get(`${product.slug}::${variant.catNo}`)
+      if (!row) continue
+      const retail = row.retailPrice
+      const market = row.marketAveragePrice
+      const wholesale = row.wholesalePerVial
+      const diff = market != null ? round2(retail - market) : null
+      const diffPct = market != null && market > 0 ? round2(((retail - market) / market) * 100) : null
+      const grossMargin = round2(retail - wholesale)
+      const marginPct = retail > 0 ? round2((grossMargin / retail) * 100) : 0
+      // "On target" = priced at least 20% below market (retail <= market * 0.8).
+      const belowTargetMargin = market != null && market > 0 ? retail > market * 0.8 : false
+
+      out.push({
+        slug: product.slug,
+        productName: product.name,
+        variantKey: variant.catNo,
+        dose: vialDose(variant.spec),
+        supplierBoxPrice: row.supplierBoxPrice,
+        vialsPerBox: row.vialsPerBox,
+        wholesalePerVial: round2(wholesale),
+        marketLow: row.marketLow,
+        marketHigh: row.marketHigh,
+        marketAverage: market,
+        marketMedian: row.marketMedian,
+        numberOfSources: row.numberOfSources,
+        confidenceScore: row.confidenceScore,
+        retailPrice: retail,
+        manualPrice: row.manualPrice,
+        differenceFromMarket: diff,
+        differenceFromMarketPct: diffPct,
+        grossMargin,
+        marginPct,
+        belowTargetMargin,
+        lastUpdated: row.lastUpdated.toISOString(),
+      })
+    }
+  }
+  return out
 }
 
 /** Client-safe { catNo -> retail price } snapshot, with a fallback when the DB is empty. */
@@ -188,13 +265,29 @@ export async function updateSupplierCost(
 }
 
 /**
- * Research current market pricing for every product via the AI Gateway and
- * recompute retail. Falls back to existing data per-product on failure.
+ * The full weekly pipeline: refresh competitor pricing, recalculate averages,
+ * update retail + margins for every product, and generate a pricing report
+ * (increases / decreases / items needing manual review).
+ *
+ * `trigger` distinguishes the Sunday cron run ('scheduled') from a manual
+ * admin refresh ('manual').
  */
-export async function refreshAllPricing(): Promise<{ updated: number; status: string; notes: string }> {
+export async function refreshAllPricing(
+  trigger: 'scheduled' | 'manual' = 'manual',
+): Promise<{ updated: number; status: string; notes: string; reportId: number }> {
   await seedPricing()
   const settings = await getSettings()
   const mode = settings.activeMode as PricingMode
+
+  // Snapshot current prices BEFORE the refresh so we can diff afterwards.
+  const before = new Map<string, PricingRow>()
+  for (const row of await getAllPricing()) {
+    before.set(`${row.productSlug}::${row.variantKey}`, row)
+  }
+
+  const increases: PricingChange[] = []
+  const decreases: PricingChange[] = []
+  const needsReview: PricingChange[] = []
   let updated = 0
   let failures = 0
 
@@ -219,6 +312,7 @@ export async function refreshAllPricing(): Promise<{ updated: number; status: st
         mode,
         markupMultiplier: settings.markupMultiplier,
       })
+      const confidence = clamp01(match.confidence)
 
       await db
         .insert(peptidePricing)
@@ -233,7 +327,7 @@ export async function refreshAllPricing(): Promise<{ updated: number; status: st
           marketAveragePrice: match.marketAverage,
           marketMedian: match.marketMedian,
           numberOfSources: match.numberOfSources,
-          confidenceScore: clamp01(match.confidence),
+          confidenceScore: confidence,
           retailPrice: derived.retailPrice,
           lastUpdated: new Date(),
         })
@@ -245,20 +339,74 @@ export async function refreshAllPricing(): Promise<{ updated: number; status: st
             marketAveragePrice: match.marketAverage,
             marketMedian: match.marketMedian,
             numberOfSources: match.numberOfSources,
-            confidenceScore: clamp01(match.confidence),
+            confidenceScore: confidence,
             wholesalePerVial: derived.wholesalePerVial,
             retailPrice: derived.retailPrice,
             lastUpdated: new Date(),
           },
         })
       updated++
+
+      // Classify the change vs the pre-refresh price.
+      const prev = before.get(`${product.slug}::${variant.catNo}`)
+      const oldPrice = prev?.retailPrice ?? derived.retailPrice
+      const newPrice = derived.retailPrice
+      const changeAmount = round2(newPrice - oldPrice)
+      const changePct = oldPrice > 0 ? round2(((newPrice - oldPrice) / oldPrice) * 100) : 0
+      const diffFromMarketPct =
+        match.marketAverage > 0
+          ? round2(((newPrice - match.marketAverage) / match.marketAverage) * 100)
+          : null
+
+      const change: PricingChange = {
+        productSlug: product.slug,
+        productName: product.name,
+        variantKey: variant.catNo,
+        dose,
+        oldPrice: round2(oldPrice),
+        newPrice: round2(newPrice),
+        changeAmount,
+        changePct,
+        marketAverage: match.marketAverage,
+        diffFromMarketPct,
+      }
+
+      if (changeAmount > 0.005) increases.push(change)
+      else if (changeAmount < -0.005) decreases.push(change)
+
+      // Manual-review triggers: thin/low-confidence sourcing, price no longer
+      // at least 20% below market, or a large week-over-week swing.
+      const reasons: string[] = []
+      if (confidence < 0.5) reasons.push('Low confidence in market data')
+      if (match.numberOfSources < 3) reasons.push('Fewer than 3 competitor sources')
+      if (match.marketAverage > 0 && newPrice > match.marketAverage * 0.8)
+        reasons.push('No longer at least 20% below market average')
+      if (Math.abs(changePct) >= 25) reasons.push(`Large price swing (${changePct}%)`)
+      if (reasons.length > 0) needsReview.push({ ...change, reasons })
     }
   }
 
   const status = failures === 0 ? 'success' : updated > 0 ? 'partial' : 'failed'
   const notes = `${updated} variants updated${failures ? `, ${failures} products failed research` : ''}`
   await db.insert(pricingRefreshLog).values({ productsUpdated: updated, status, notes })
-  return { updated, status, notes }
+
+  const [report] = await db
+    .insert(pricingReports)
+    .values({
+      trigger,
+      productsUpdated: updated,
+      increasesCount: increases.length,
+      decreasesCount: decreases.length,
+      reviewCount: needsReview.length,
+      increases,
+      decreases,
+      needsReview,
+      status,
+      notes,
+    })
+    .returning({ id: pricingReports.id })
+
+  return { updated, status, notes, reportId: report?.id ?? 0 }
 }
 
 export async function getRefreshLog(limit = 5) {
@@ -267,6 +415,27 @@ export async function getRefreshLog(limit = 5) {
     .from(pricingRefreshLog)
     .orderBy(desc(pricingRefreshLog.ranAt))
     .limit(limit)
+}
+
+export async function getLatestReport(): Promise<PricingReport | null> {
+  const rows = await db
+    .select()
+    .from(pricingReports)
+    .orderBy(desc(pricingReports.generatedAt))
+    .limit(1)
+  return rows[0] ?? null
+}
+
+export async function getReports(limit = 12): Promise<PricingReport[]> {
+  return db
+    .select()
+    .from(pricingReports)
+    .orderBy(desc(pricingReports.generatedAt))
+    .limit(limit)
+}
+
+function round2(n: number): number {
+  return Math.round(n * 100) / 100
 }
 
 function normalizeDose(d: string): string {

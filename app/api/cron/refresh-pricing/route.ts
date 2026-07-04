@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const result = await refreshAllPricing()
+    const result = await refreshAllPricing('scheduled')
     revalidatePath('/')
     revalidatePath('/products')
     revalidatePath('/products/[slug]', 'page')

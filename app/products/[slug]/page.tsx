@@ -24,7 +24,8 @@ import { FavoriteButton } from '@/components/shop/favorite-button'
 import { ViewTracker } from '@/components/shop/view-tracker'
 import { CoaDownloadButton } from '@/components/shop/coa-download-button'
 import { PRODUCTS, getProduct, getRelatedProducts, vialLabel } from '@/lib/products-data'
-import { retailUnit, retailRange, formatUSD } from '@/lib/pricing/pricing-service'
+import { getRetailSnapshot } from '@/lib/pricing/service'
+import { retailUnitFrom, retailRangeFrom, formatUSD } from '@/lib/pricing/format'
 import {
   getTypeContent,
   getStorage,
@@ -66,6 +67,7 @@ export default async function ProductPage({
   const reconstitution = getReconstitution(product)
   const faqs = getFaqs(product)
   const related = getRelatedProducts(product)
+  const pricing = await getRetailSnapshot()
 
   const relatedSystems = product.systems
     .map((name) => SYSTEMS.find((s) => s.name === name))
@@ -262,7 +264,7 @@ export default async function ProductPage({
                   <span className="font-mono text-xs text-muted-foreground">{v.catNo}</span>
                   <span className="text-foreground">{vialLabel(v.spec)}</span>
                   <span className="text-right font-heading font-semibold text-primary">
-                    {formatUSD(retailUnit(v.catNo))}
+                    {formatUSD(retailUnitFrom(pricing, v.catNo))}
                   </span>
                 </li>
               ))}
@@ -452,7 +454,7 @@ export default async function ProductPage({
                     <h3 className="mt-1 font-heading text-lg font-semibold text-primary">{rel.name}</h3>
                     <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{rel.blurb}</p>
                     <div className="mt-4 flex items-center justify-between pt-2">
-                      <span className="font-heading font-semibold text-primary">{priceRange(rel)}</span>
+                      <span className="font-heading font-semibold text-primary">{retailRangeFrom(pricing, rel)}</span>
                       <ArrowUpRight className="h-5 w-5 text-primary transition-colors group-hover:text-accent" />
                     </div>
                   </div>

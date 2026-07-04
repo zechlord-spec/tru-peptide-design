@@ -16,7 +16,9 @@ import {
 } from 'lucide-react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
-import { PRODUCTS, getProduct, getRelatedProducts, priceRange } from '@/lib/products-data'
+import { PRODUCTS, getProduct, getRelatedProducts } from '@/lib/products-data'
+import { getRetailSnapshot } from '@/lib/pricing/service'
+import { retailRangeFrom } from '@/lib/pricing/format'
 import { getTypeContent, getStorage } from '@/lib/product-content'
 import { getEduContent, getSafetyInfo } from '@/lib/library-content'
 import { SYSTEMS } from '@/lib/systems-data'
@@ -65,6 +67,7 @@ export default async function LibraryDetailPage({
   const safety = getSafetyInfo(product)
   const storage = getStorage(product)
   const related = getRelatedProducts(product, 3)
+  const pricing = await getRetailSnapshot()
 
   const relatedSystems = product.systems
     .map((name) => SYSTEMS.find((s) => s.name === name))
@@ -391,7 +394,7 @@ export default async function LibraryDetailPage({
               Source {product.name} for your research
             </h2>
             <p className="mt-2 text-muted-foreground">
-              Third-party tested reference material, from {priceRange(product)} per box.
+              Third-party tested reference material, from {retailRangeFrom(pricing, product)} per vial.
             </p>
           </div>
           <Link

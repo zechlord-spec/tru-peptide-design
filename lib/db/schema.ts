@@ -1,5 +1,6 @@
 import {
   integer,
+  jsonb,
   numeric,
   pgTable,
   serial,
@@ -51,5 +52,38 @@ export const pricingRefreshLog = pgTable('pricing_refresh_log', {
   notes: text('notes'),
 })
 
+// A single change line inside a pricing report.
+export type PricingChange = {
+  productSlug: string
+  productName: string
+  variantKey: string
+  dose: string
+  oldPrice: number
+  newPrice: number
+  changeAmount: number
+  changePct: number
+  marketAverage: number | null
+  diffFromMarketPct: number | null
+  reasons?: string[]
+}
+
+// Weekly (or manual) pricing report: what went up, what went down, and what a
+// human should look at (low confidence / thin sourcing / no longer 20% below).
+export const pricingReports = pgTable('pricing_reports', {
+  id: serial('id').primaryKey(),
+  generatedAt: timestamp('generated_at', { withTimezone: true }).notNull().defaultNow(),
+  trigger: text('trigger').notNull().default('scheduled'),
+  productsUpdated: integer('products_updated').notNull().default(0),
+  increasesCount: integer('increases_count').notNull().default(0),
+  decreasesCount: integer('decreases_count').notNull().default(0),
+  reviewCount: integer('review_count').notNull().default(0),
+  increases: jsonb('increases').$type<PricingChange[]>().notNull().default([]),
+  decreases: jsonb('decreases').$type<PricingChange[]>().notNull().default([]),
+  needsReview: jsonb('needs_review').$type<PricingChange[]>().notNull().default([]),
+  status: text('status').notNull().default('success'),
+  notes: text('notes'),
+})
+
 export type PricingRow = typeof peptidePricing.$inferSelect
+export type PricingReport = typeof pricingReports.$inferSelect
 export type PricingMode = 'market' | 'markup6x' | 'manual'

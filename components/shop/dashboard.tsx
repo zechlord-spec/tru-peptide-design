@@ -18,7 +18,9 @@ import {
   User,
 } from 'lucide-react'
 import { useStore, money, type CoaDownload } from '@/lib/store'
-import { getProduct, priceRange, type Product } from '@/lib/products-data'
+import { getProduct, type Product } from '@/lib/products-data'
+import { useRetailSnapshot } from '@/lib/pricing/pricing-context'
+import { retailRangeFrom } from '@/lib/pricing/format'
 import { SignInForm } from '@/components/shop/sign-in-form'
 
 type TabId = 'orders' | 'saved' | 'coa' | 'favorites' | 'recent' | 'settings'
@@ -232,6 +234,7 @@ function ProductGridPanel({
   onRemove?: (slug: string) => void
   removeLabel?: string
 }) {
+  const snapshot = useRetailSnapshot()
   const products = slugs
     .map((s) => getProduct(s))
     .filter((p): p is Product => Boolean(p))
@@ -287,7 +290,7 @@ function ProductGridPanel({
               >
                 {p.name}
               </Link>
-              <p className="mt-1 font-heading text-sm font-bold text-primary">{priceRange(p)}</p>
+              <p className="mt-1 font-heading text-sm font-bold text-primary">{retailRangeFrom(snapshot, p)}</p>
             </div>
             {onRemove && (
               <button

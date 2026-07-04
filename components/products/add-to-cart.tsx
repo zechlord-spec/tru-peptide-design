@@ -3,24 +3,29 @@
 import { useState } from 'react'
 import { Check, Minus, Plus, ShoppingBag } from 'lucide-react'
 import type { Product } from '@/lib/products-data'
+import { vialLabel } from '@/lib/products-data'
+import { useRetailSnapshot } from '@/lib/pricing/pricing-context'
+import { retailUnitFrom } from '@/lib/pricing/format'
 import { useStore } from '@/lib/store'
 
 export function AddToCart({ product }: { product: Product }) {
   const { addItem } = useStore()
+  const snapshot = useRetailSnapshot()
   const [selected, setSelected] = useState(product.variants[0].catNo)
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
 
   const variant = product.variants.find((v) => v.catNo === selected) ?? product.variants[0]
-  const total = variant.price * qty
+  const unit = retailUnitFrom(snapshot, variant.catNo)
+  const total = unit * qty
 
   function handleAdd() {
     addItem({
       productSlug: product.slug,
       name: product.name,
       catNo: variant.catNo,
-      spec: variant.spec,
-      price: variant.price,
+      spec: vialLabel(variant.spec),
+      price: unit,
       image: product.image,
       qty,
     })
@@ -33,7 +38,7 @@ export function AddToCart({ product }: { product: Product }) {
       {/* Variant selector */}
       <div>
         <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-          Specification
+          Vial size
         </span>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           {product.variants.map((v) => {
@@ -51,10 +56,10 @@ export function AddToCart({ product }: { product: Product }) {
                 }`}
               >
                 <span className="flex flex-col">
-                  <span className="font-medium">{v.spec}</span>
+                  <span className="font-medium">{vialLabel(v.spec)}</span>
                   <span className="font-mono text-[11px] text-muted-foreground">{v.catNo}</span>
                 </span>
-                <span className="font-heading font-semibold">${v.price}</span>
+                <span className="font-heading font-semibold">${retailUnitFrom(snapshot, v.catNo)}</span>
               </button>
             )
           })}

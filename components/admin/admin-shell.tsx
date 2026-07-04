@@ -15,6 +15,9 @@ import {
   Target,
   BookOpen,
   BarChart3,
+  DollarSign,
+  Radar,
+  CalendarClock,
   Menu,
   X,
   ArrowLeft,
@@ -33,12 +36,24 @@ import { SystemsSection } from './sections/systems'
 import { GoalsSection } from './sections/goals'
 import { LibrarySection } from './sections/library'
 import { AnalyticsSection } from './sections/analytics'
+import { PricingDashboardSection } from './sections/pricing-dashboard'
+import { MarketIntelligenceSection } from './sections/market-intelligence'
+import { PricingReportsSection } from './sections/pricing-reports'
+import { PricingDashboardSection } from './sections/pricing-dashboard'
+import { MarketIntelligenceSection } from './sections/market-intelligence'
+import { PricingReportsSection } from './sections/pricing-reports'
 
 type NavItem = { id: string; label: string; icon: LucideIcon; group: string }
 
 const NAV: NavItem[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard, group: 'General' },
   { id: 'analytics', label: 'Analytics', icon: BarChart3, group: 'General' },
+  { id: 'pricing', label: 'Pricing Dashboard', icon: DollarSign, group: 'Pricing' },
+  { id: 'market', label: 'Market Intelligence', icon: Radar, group: 'Pricing' },
+  { id: 'pricing-reports', label: 'Scheduler & Reports', icon: CalendarClock, group: 'Pricing' },
+  { id: 'pricing', label: 'Pricing Dashboard', icon: DollarSign, group: 'Pricing' },
+  { id: 'market-intel', label: 'Market Intelligence', icon: Radar, group: 'Pricing' },
+  { id: 'pricing-reports', label: 'Scheduler & Reports', icon: CalendarClock, group: 'Pricing' },
   { id: 'orders', label: 'Orders', icon: ShoppingBag, group: 'Commerce' },
   { id: 'inventory', label: 'Inventory', icon: Boxes, group: 'Commerce' },
   { id: 'products', label: 'Products', icon: Package, group: 'Commerce' },
@@ -51,7 +66,7 @@ const NAV: NavItem[] = [
   { id: 'library', label: 'Compound Library', icon: BookOpen, group: 'Content' },
 ]
 
-const GROUPS = ['General', 'Commerce', 'Content']
+const GROUPS = ['General', 'Pricing', 'Commerce', 'Content']
 
 export function AdminShell() {
   const [active, setActive] = useState('overview')
@@ -69,6 +84,18 @@ export function AdminShell() {
         return <OverviewSection onNavigate={go} />
       case 'analytics':
         return <AnalyticsSection />
+      case 'pricing':
+        return <PricingDashboardSection />
+      case 'market':
+        return <MarketIntelligenceSection />
+      case 'pricing-reports':
+        return <PricingReportsSection />
+      case 'pricing':
+        return <PricingDashboardSection />
+      case 'market-intel':
+        return <MarketIntelligenceSection />
+      case 'pricing-reports':
+        return <PricingReportsSection />
       case 'orders':
         return <OrdersSection />
       case 'inventory':

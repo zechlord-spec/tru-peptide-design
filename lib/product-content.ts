@@ -323,8 +323,8 @@ export function getFaqs(product: Product): Faq[] {
       answer: 'Every batch is third-party tested by HPLC and mass spectrometry. A Certificate of Analysis (COA) is available for each lot from the COA section on this page.',
     },
     {
-      question: 'What is the specification per box?',
-      answer: `${product.name} is available in ${product.variants.length} configuration${product.variants.length > 1 ? 's' : ''}, each supplied as ${product.variants[0].spec.includes('vials') ? 'a box of 10 vials' : 'a research box'}. See the specifications table above for catalog numbers and pricing.`,
+      question: 'How is it supplied?',
+      answer: `${product.name} is sold by the individual vial in ${product.variants.length} vial size${product.variants.length > 1 ? 's' : ''}. See the specifications table above for catalog numbers and per-vial pricing.`,
     },
   ]
   if (!LIQUID_TYPES.has(product.compoundType)) {
