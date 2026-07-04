@@ -16,6 +16,8 @@ import {
   X,
 } from 'lucide-react'
 import type { Product } from '@/lib/products-data'
+import { vialLabel } from '@/lib/products-data'
+import { retailUnit } from '@/lib/pricing/pricing-service'
 import { useStore, money, AUTOSHIP_DISCOUNT, type PurchaseType } from '@/lib/store'
 
 const FREQUENCIES = [
@@ -59,7 +61,7 @@ type PanelState = {
 function PurchaseOptions(s: PanelState) {
   const { product } = s
   const variant = product.variants.find((v) => v.catNo === s.selected) ?? product.variants[0]
-  const base = variant.price
+  const base = retailUnit(variant.catNo)
   const autoshipUnit = Math.round(base * (1 - AUTOSHIP_DISCOUNT))
   const savingsPct = Math.round(AUTOSHIP_DISCOUNT * 100)
 
@@ -69,7 +71,7 @@ function PurchaseOptions(s: PanelState) {
       {product.variants.length > 1 && (
         <div>
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-            Specification
+            Vial size
           </span>
           <div className="mt-2.5 grid gap-2 sm:grid-cols-2">
             {product.variants.map((v) => {
@@ -87,10 +89,10 @@ function PurchaseOptions(s: PanelState) {
                   }`}
                 >
                   <span className="flex flex-col">
-                    <span className="font-medium">{v.spec}</span>
+                    <span className="font-medium">{vialLabel(v.spec)}</span>
                     <span className="font-mono text-[10px] text-muted-foreground">{v.catNo}</span>
                   </span>
-                  <span className="font-heading text-sm font-semibold">${v.price}</span>
+                  <span className="font-heading text-sm font-semibold">{money(retailUnit(v.catNo))}</span>
                 </button>
               )
             })}
@@ -314,7 +316,7 @@ export function PurchasePanel({ product }: { product: Product }) {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const variant = product.variants.find((v) => v.catNo === selected) ?? product.variants[0]
-  const base = variant.price
+  const base = retailUnit(variant.catNo)
   const isAuto = purchaseType === 'autoship'
   const unit = isAuto ? Math.round(base * (1 - AUTOSHIP_DISCOUNT)) : base
   const total = unit * qty
@@ -334,7 +336,7 @@ export function PurchasePanel({ product }: { product: Product }) {
       productSlug: product.slug,
       name: product.name,
       catNo: variant.catNo,
-      spec: variant.spec,
+      spec: vialLabel(variant.spec),
       price: unit,
       image: product.image,
       qty,

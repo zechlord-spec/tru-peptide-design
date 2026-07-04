@@ -23,7 +23,8 @@ import { PurchasePanel } from '@/components/products/purchase-panel'
 import { FavoriteButton } from '@/components/shop/favorite-button'
 import { ViewTracker } from '@/components/shop/view-tracker'
 import { CoaDownloadButton } from '@/components/shop/coa-download-button'
-import { PRODUCTS, getProduct, getRelatedProducts, priceRange } from '@/lib/products-data'
+import { PRODUCTS, getProduct, getRelatedProducts, vialLabel } from '@/lib/products-data'
+import { retailUnit, retailRange, formatUSD } from '@/lib/pricing/pricing-service'
 import {
   getTypeContent,
   getStorage,
@@ -252,15 +253,17 @@ export default async function ProductPage({
           <div className="mt-8 overflow-hidden rounded-2xl border border-border">
             <div className="grid grid-cols-[1fr_2fr_auto] gap-2 border-b border-border bg-secondary px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               <span>Cat. No.</span>
-              <span>Specification</span>
-              <span className="text-right">Per Box (USD)</span>
+              <span>Vial</span>
+              <span className="text-right">Per Vial (USD)</span>
             </div>
             <ul className="divide-y divide-border">
               {product.variants.map((v) => (
                 <li key={v.catNo} className="grid grid-cols-[1fr_2fr_auto] items-center gap-2 px-5 py-3.5 text-sm transition-colors hover:bg-secondary/50">
                   <span className="font-mono text-xs text-muted-foreground">{v.catNo}</span>
-                  <span className="text-foreground">{v.spec}</span>
-                  <span className="text-right font-heading font-semibold text-primary">${v.price}</span>
+                  <span className="text-foreground">{vialLabel(v.spec)}</span>
+                  <span className="text-right font-heading font-semibold text-primary">
+                    {formatUSD(retailUnit(v.catNo))}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -354,7 +357,7 @@ export default async function ProductPage({
               <CoaDownloadButton
                 slug={product.slug}
                 name={product.name}
-                variant={{ catNo: product.variants[0].catNo, spec: product.variants[0].spec }}
+                variant={{ catNo: product.variants[0].catNo, spec: vialLabel(product.variants[0].spec) }}
               />
               <a
                 href="#"
