@@ -2,25 +2,27 @@
 
 // Account facade — the recommended entry point for new account/order UI code.
 //
-// All data surfaced here is user-scoped and flows through the AccountClient
-// boundary (`lib/client/account.ts`): reference mode persists to localStorage,
-// http mode syncs with your backend. This hook narrows the store to the
-// account domain so components stay decoupled from cart internals.
+// Session/profile and order history are backend-owned and flow through the
+// AccountClient boundary (`lib/client/account.ts`): with no backend there is no
+// reference data (signed out, no orders); http mode syncs with your backend.
+// Personalization (favorites, saved, recently-viewed, COA downloads) is
+// device-local UI state. This hook narrows the store to the account domain so
+// components stay decoupled from cart internals.
 
 import { useMemo } from 'react'
 import { useStore } from '@/lib/store'
-import type { Account, CoaDownload, Order } from '@/lib/store-types'
+import type { Account, CoaDownload, Order, OrderDraft } from '@/lib/store-types'
 
 export interface UseAccount {
   hydrated: boolean
   account: Account
   isSignedIn: boolean
-  signIn: (name: string, email: string) => void
+  signIn: (name: string, email: string) => Promise<void>
   signOut: () => void
-  updateAccount: (patch: Partial<NonNullable<Account>>) => void
+  updateAccount: (patch: Partial<NonNullable<Account>>) => Promise<void>
   // orders
   orders: Order[]
-  placeOrder: (o: Omit<Order, 'id' | 'createdAt' | 'status'>) => Order
+  placeOrder: (draft: OrderDraft) => Promise<Order>
   // favorites
   favorites: string[]
   toggleFavorite: (slug: string) => void

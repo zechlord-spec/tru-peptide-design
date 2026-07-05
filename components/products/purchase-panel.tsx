@@ -64,8 +64,14 @@ function PurchaseOptions(s: PanelState) {
   const snapshot = useRetailSnapshot()
   const variant = product.variants.find((v) => v.catNo === s.selected) ?? product.variants[0]
   const base = retailUnitFrom(snapshot, variant.catNo)
+  const hasPrice = base > 0
   const autoshipUnit = Math.round(base * (1 - AUTOSHIP_DISCOUNT))
   const savingsPct = Math.round(AUTOSHIP_DISCOUNT * 100)
+  // Show a neutral placeholder until a backend supplies live prices.
+  const priceOrDash = (catNo: string) => {
+    const p = retailUnitFrom(snapshot, catNo)
+    return p > 0 ? money(p) : '—'
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -94,7 +100,7 @@ function PurchaseOptions(s: PanelState) {
                     <span className="font-medium">{vialLabel(v.spec)}</span>
                     <span className="font-mono text-[10px] text-muted-foreground">{v.catNo}</span>
                   </span>
-                  <span className="font-heading text-sm font-semibold">{money(retailUnitFrom(snapshot, v.catNo))}</span>
+                  <span className="font-heading text-sm font-semibold">{priceOrDash(v.catNo)}</span>
                 </button>
               )
             })}
@@ -121,7 +127,9 @@ function PurchaseOptions(s: PanelState) {
             <div className="flex-1">
               <div className="flex items-center justify-between gap-2">
                 <span className="font-heading text-sm font-semibold text-primary">One-Time Purchase</span>
-                <span className="font-heading text-base font-bold text-primary">{money(base)}</span>
+                <span className="font-heading text-base font-bold text-primary">
+                  {hasPrice ? money(base) : '—'}
+                </span>
               </div>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                 A single delivery. No recurring shipments.
@@ -154,8 +162,16 @@ function PurchaseOptions(s: PanelState) {
                   TRU AutoShip
                 </span>
                 <span className="flex items-baseline gap-1.5">
-                  <span className="text-xs text-muted-foreground line-through">{money(base)}</span>
-                  <span className="font-heading text-base font-bold text-primary">{money(autoshipUnit)}</span>
+                  {hasPrice ? (
+                    <>
+                      <span className="text-xs text-muted-foreground line-through">{money(base)}</span>
+                      <span className="font-heading text-base font-bold text-primary">
+                        {money(autoshipUnit)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="font-heading text-base font-bold text-primary">—</span>
+                  )}
                 </span>
               </div>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
@@ -418,7 +434,9 @@ export function PurchasePanel({ product }: { product: Product }) {
       </div>
       <div
         className={`transition-all duration-500 ${
-          isAuto ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-1 opacity-0'
+          isAuto && hasPrice
+            ? 'translate-y-0 opacity-100'
+            : 'pointer-events-none translate-y-1 opacity-0'
         }`}
       >
         <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/15 px-3 py-1.5 text-xs font-semibold text-primary">
