@@ -20,8 +20,10 @@ export function StackCard({ stack }: { stack: RecommendedStack }) {
     starting: retailStartingFrom(snapshot, product),
   }))
   const total = lines.reduce((sum, l) => sum + (l.starting?.price ?? 0), 0)
+  const hasPrice = total > 0
 
   function handleAddStack() {
+    if (!hasPrice) return
     for (const { product, starting } of lines) {
       if (!starting) continue
       addItem({
@@ -82,14 +84,24 @@ export function StackCard({ stack }: { stack: RecommendedStack }) {
           <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
             Stack from
           </p>
-          <p className="font-heading text-xl font-bold text-primary">{formatUSD(total)}</p>
+          <p className="font-heading text-xl font-bold text-primary">
+            {hasPrice ? formatUSD(total) : '—'}
+          </p>
         </div>
         <button
           type="button"
           onClick={handleAddStack}
-          className="btn-premium inline-flex items-center justify-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+          disabled={!hasPrice}
+          aria-disabled={!hasPrice}
+          className={`btn-premium inline-flex items-center justify-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${
+            hasPrice
+              ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+              : 'cursor-not-allowed bg-secondary text-muted-foreground'
+          }`}
         >
-          {added ? (
+          {!hasPrice ? (
+            'Unavailable'
+          ) : added ? (
             <>
               <Check className="h-4 w-4" aria-hidden="true" />
               Added

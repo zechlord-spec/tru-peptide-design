@@ -22,11 +22,16 @@ const SORTS: { key: SortKey; label: string }[] = [
   { key: 'name', label: 'Name A–Z' },
 ]
 
-function minPrice(p: Product) {
-  return Math.min(...p.variants.map((v) => v.price))
+// Lowest retail price for a product from the active snapshot. Returns
+// Infinity when no variant is priced so unpriced products sort last and the
+// catalog stays stable when the backend has not supplied prices yet.
+function minPrice(p: Product, snapshot: RetailSnapshot) {
+  const prices = p.variants.map((v) => retailUnitFrom(snapshot, v.catNo)).filter((n) => n > 0)
+  return prices.length > 0 ? Math.min(...prices) : Number.POSITIVE_INFINITY
 }
 
 export function ProductCatalog({ products }: { products: Product[] }) {
+  const snapshot = useRetailSnapshot()
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<string | null>(null)
   const [goal, setGoal] = useState<string | null>(null)
@@ -80,9 +85,9 @@ export function ProductCatalog({ products }: { products: Product[] }) {
         case 'newest':
           return Number(!!b.isNew) - Number(!!a.isNew) || a.name.localeCompare(b.name)
         case 'price-asc':
-          return minPrice(a) - minPrice(b)
+          return minPrice(a, snapshot) - minPrice(b, snapshot)
         case 'price-desc':
-          return minPrice(b) - minPrice(a)
+          return minPrice(b, snapshot) - minPrice(a, snapshot)
         case 'name':
           return a.name.localeCompare(b.name)
         default:
@@ -90,7 +95,7 @@ export function ProductCatalog({ products }: { products: Product[] }) {
       }
     })
     return list
-  }, [products, search, category, goal, system, compoundType, sort])
+  }, [products, search, category, goal, system, compoundType, sort, snapshot])
 
   const activeCount = [category, goal, system, compoundType].filter(Boolean).length
 

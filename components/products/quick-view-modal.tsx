@@ -129,7 +129,9 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
                   <span className="font-mono text-xs text-muted-foreground">{v.catNo}</span>
                   <span className="text-foreground">{vialLabel(v.spec)}</span>
                   <span className="text-right font-heading font-semibold text-primary">
-                    {formatUSD(retailUnitFrom(snapshot, v.catNo))}
+                    {retailUnitFrom(snapshot, v.catNo) > 0
+                      ? formatUSD(retailUnitFrom(snapshot, v.catNo))
+                      : '—'}
                   </span>
                 </li>
               ))}

@@ -320,6 +320,7 @@ export function PurchasePanel({ product }: { product: Product }) {
 
   const variant = product.variants.find((v) => v.catNo === selected) ?? product.variants[0]
   const base = retailUnitFrom(snapshot, variant.catNo)
+  const hasPrice = base > 0
   const isAuto = purchaseType === 'autoship'
   const unit = isAuto ? Math.round(base * (1 - AUTOSHIP_DISCOUNT)) : base
   const total = unit * qty
@@ -335,6 +336,7 @@ export function PurchasePanel({ product }: { product: Product }) {
   }, [drawerOpen])
 
   function handleAdd() {
+    if (!hasPrice) return
     addItem({
       productSlug: product.slug,
       name: product.name,
@@ -370,13 +372,19 @@ export function PurchasePanel({ product }: { product: Product }) {
     <button
       type="button"
       onClick={handleAdd}
+      disabled={!hasPrice}
+      aria-disabled={!hasPrice}
       className={`btn-premium flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-semibold transition-colors ${
-        added
-          ? 'bg-accent text-accent-foreground'
-          : 'bg-primary text-primary-foreground hover:bg-primary/90'
+        !hasPrice
+          ? 'cursor-not-allowed bg-secondary text-muted-foreground'
+          : added
+            ? 'bg-accent text-accent-foreground'
+            : 'bg-primary text-primary-foreground hover:bg-primary/90'
       }`}
     >
-      {added ? (
+      {!hasPrice ? (
+        'Pricing unavailable'
+      ) : added ? (
         <>
           <Check className="h-5 w-5" />
           Added to cart
@@ -405,7 +413,7 @@ export function PurchasePanel({ product }: { product: Product }) {
           key={`${purchaseType}-${total}`}
           className="animate-soft-fade inline-block font-heading text-3xl font-bold text-primary"
         >
-          {money(total)}
+          {hasPrice ? money(total) : '—'}
         </span>
       </div>
       <div
@@ -457,9 +465,11 @@ export function PurchasePanel({ product }: { product: Product }) {
         <div className="flex items-center justify-between gap-3">
           <div>
             <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {isAuto ? `AutoShip · save ${savingsPct}%` : 'One-time'}
+              {!hasPrice ? 'Research use only' : isAuto ? `AutoShip · save ${savingsPct}%` : 'One-time'}
             </span>
-            <span className="font-heading text-xl font-bold text-primary">{money(total)}</span>
+            <span className="font-heading text-xl font-bold text-primary">
+              {hasPrice ? money(total) : '—'}
+            </span>
           </div>
           <button
             type="button"

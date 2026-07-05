@@ -14,6 +14,7 @@ type ProductCardProps = {
 
 export function ProductCard({ product, onQuickView }: ProductCardProps) {
   const retailRange = useRetailRange(product)
+  const hasPrice = retailRange !== '—'
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10">
       {/* Image */}
@@ -70,7 +71,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
               {retailRange}
             </span>
             <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-              per vial
+              {hasPrice ? 'per vial' : 'pricing soon'}
             </span>
           </span>
         </div>

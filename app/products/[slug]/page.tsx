@@ -272,7 +272,9 @@ export default async function ProductPage({
                   <span className="font-mono text-xs text-muted-foreground">{v.catNo}</span>
                   <span className="text-foreground">{vialLabel(v.spec)}</span>
                   <span className="text-right font-heading font-semibold text-primary">
-                    {formatUSD(retailUnitFrom(pricing, v.catNo))}
+                    {retailUnitFrom(pricing, v.catNo) > 0
+                      ? formatUSD(retailUnitFrom(pricing, v.catNo))
+                      : '—'}
                   </span>
                 </li>
               ))}
