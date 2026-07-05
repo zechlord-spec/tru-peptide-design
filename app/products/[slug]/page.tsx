@@ -24,7 +24,9 @@ import { VialImage } from '@/components/products/vial-image'
 import { FavoriteButton } from '@/components/shop/favorite-button'
 import { ViewTracker } from '@/components/shop/view-tracker'
 import { CoaDownloadButton } from '@/components/shop/coa-download-button'
-import { PRODUCTS, getProduct, getRelatedProducts, vialLabel } from '@/lib/products-data'
+import { getDataSource } from '@/lib/data'
+import { vialLabel } from '@/lib/data/format'
+import { iconFor } from '@/lib/icons'
 import { getRetailSnapshot } from '@/lib/pricing/service'
 import { retailUnitFrom, retailRangeFrom, formatUSD } from '@/lib/pricing/format'
 import {
@@ -33,11 +35,11 @@ import {
   getReconstitution,
   getFaqs,
 } from '@/lib/product-content'
-import { SYSTEMS } from '@/lib/systems-data'
-import { GOALS } from '@/lib/goals-data'
 
-export function generateStaticParams() {
-  return PRODUCTS.map((p) => ({ slug: p.slug }))
+export async function generateStaticParams() {
+  const data = getDataSource()
+  const products = await data.products.list()
+  return products.map((p) => ({ slug: p.slug }))
 }
 
 export async function generateMetadata({
@@ -46,7 +48,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const product = getProduct(slug)
+  const data = getDataSource()
+  const product = await data.products.getBySlug(slug)
   if (!product) return { title: 'Compound Not Found | TRU PEPTIDE' }
   return {
     title: `${product.name} — ${product.category} | TRU PEPTIDE`,
@@ -60,21 +63,26 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const product = getProduct(slug)
+  const data = getDataSource()
+  const product = await data.products.getBySlug(slug)
   if (!product) notFound()
 
   const content = getTypeContent(product)
   const storage = getStorage(product)
   const reconstitution = getReconstitution(product)
   const faqs = getFaqs(product)
-  const related = getRelatedProducts(product)
-  const pricing = await getRetailSnapshot()
+  const [related, allSystems, allGoals, pricing] = await Promise.all([
+    data.products.getRelated(product.slug),
+    data.systems.list(),
+    data.goals.list(),
+    getRetailSnapshot(),
+  ])
 
   const relatedSystems = product.systems
-    .map((name) => SYSTEMS.find((s) => s.name === name))
+    .map((name) => allSystems.find((s) => s.name === name))
     .filter((s): s is NonNullable<typeof s> => Boolean(s))
   const suggestedGoals = product.goals
-    .map((name) => GOALS.find((g) => g.name === name))
+    .map((name) => allGoals.find((g) => g.name === name))
     .filter((g): g is NonNullable<typeof g> => Boolean(g))
 
   return (
@@ -481,7 +489,7 @@ export default async function ProductPage({
             </div>
             <div className="mt-12 grid gap-6 md:grid-cols-3">
               {relatedSystems.map((sys) => {
-                const SysIcon = sys.icon
+                const SysIcon = iconFor(sys.iconKey)
                 return (
                   <Link
                     key={sys.slug}
@@ -528,7 +536,7 @@ export default async function ProductPage({
             </div>
             <div className="mt-10 flex flex-wrap gap-4">
               {suggestedGoals.map((goal) => {
-                const GoalIcon = goal.icon
+                const GoalIcon = iconFor(goal.iconKey)
                 return (
                   <Link
                     key={goal.slug}

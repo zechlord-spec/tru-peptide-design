@@ -3,15 +3,15 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Search, BookOpen, ArrowUpRight } from 'lucide-react'
-import { PRODUCTS, COMPOUND_TYPES } from '@/lib/products-data'
+import type { Product } from '@/lib/data/types'
 
-export function LibraryBrowser() {
+export function LibraryBrowser({ products }: { products: Product[] }) {
   const [query, setQuery] = useState('')
   const [type, setType] = useState<string>('All')
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return PRODUCTS.filter((p) => {
+    return products.filter((p) => {
       const matchesType = type === 'All' || p.compoundType === type
       const matchesQuery =
         q === '' ||
@@ -20,9 +20,13 @@ export function LibraryBrowser() {
         p.category.toLowerCase().includes(q)
       return matchesType && matchesQuery
     })
-  }, [query, type])
+  }, [products, query, type])
 
-  const filters = ['All', ...COMPOUND_TYPES]
+  const compoundTypes = useMemo(
+    () => Array.from(new Set(products.map((p) => p.compoundType))).sort(),
+    [products],
+  )
+  const filters = ['All', ...compoundTypes]
 
   return (
     <div>

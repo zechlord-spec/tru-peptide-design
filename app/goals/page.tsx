@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { GoalDiscovery } from '@/components/goals/goal-discovery'
+import { getDataSource } from '@/lib/data'
 
 export const metadata: Metadata = {
   title: 'Goal Discovery | TRU PEPTIDE',
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
     'Begin your TRU journey by selecting what you want to accomplish. A luxury wellness assessment matching your goals to systems, products, and science.',
 }
 
-export default function GoalsPage() {
+export default async function GoalsPage() {
+  const data = getDataSource()
+  const goals = await data.goals.list()
+
   return (
     <main id="top" className="min-h-screen bg-background">
       <SiteHeader />
@@ -30,7 +34,7 @@ export default function GoalsPage() {
         </div>
       </section>
 
-      <GoalDiscovery />
+      <GoalDiscovery goals={goals} />
       <SiteFooter />
     </main>
   )

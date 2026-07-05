@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { LibraryBrowser } from '@/components/library/library-browser'
+import { getDataSource } from '@/lib/data'
 
 export const metadata: Metadata = {
   title: 'Compound Library — The Science of Peptides | TRU PEPTIDE',
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
     'The TRU PEPTIDE Compound Library is an educational hub covering the discovery, mechanism, and current research behind each peptide — for research reference use only.',
 }
 
-export default function LibraryHubPage() {
+export default async function LibraryHubPage() {
+  const data = getDataSource()
+  const products = await data.products.list()
+
   return (
     <main className="min-h-screen bg-background">
       <SiteHeader />
@@ -34,7 +38,7 @@ export default function LibraryHubPage() {
       {/* Browser */}
       <section className="px-4 pb-28">
         <div className="mx-auto max-w-7xl">
-          <LibraryBrowser />
+          <LibraryBrowser products={products} />
         </div>
       </section>
 

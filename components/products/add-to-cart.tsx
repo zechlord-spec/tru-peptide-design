@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { Check, Minus, Plus, ShoppingBag } from 'lucide-react'
-import type { Product } from '@/lib/products-data'
-import { vialLabel } from '@/lib/products-data'
+import type { Product } from '@/lib/data/types'
+import { vialLabel } from '@/lib/data/format'
 import { useRetailSnapshot } from '@/lib/pricing/pricing-context'
 import { retailUnitFrom } from '@/lib/pricing/format'
 import { useStore } from '@/lib/store'

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Star, Plus, ArrowUpRight, Check, Flame, Sparkles } from 'lucide-react'
 import { useState } from 'react'
-import { vialDose } from '@/lib/products-data'
+import { vialDose } from '@/lib/data/format'
 import { useRetailSnapshot } from '@/lib/pricing/pricing-context'
 import { retailStartingFrom, formatUSD } from '@/lib/pricing/format'
 import { VialImage } from '@/components/products/vial-image'

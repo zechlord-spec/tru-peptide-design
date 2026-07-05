@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Download, Check } from 'lucide-react'
 import { useStore } from '@/lib/store'
-import { vialLabel } from '@/lib/products-data'
+import { vialLabel } from '@/lib/data/format'
 
 type Variant = { catNo: string; spec: string }
 

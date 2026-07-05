@@ -24,7 +24,7 @@ function minPrice(p: Product) {
   return Math.min(...p.variants.map((v) => v.price))
 }
 
-export function ProductCatalog() {
+export function ProductCatalog({ products }: { products: Product[] }) {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<string | null>(null)
   const [goal, setGoal] = useState<string | null>(null)
@@ -34,8 +34,24 @@ export function ProductCatalog() {
   const [quickView, setQuickView] = useState<Product | null>(null)
   const [filtersOpen, setFiltersOpen] = useState(false)
 
+  // Filter options are derived from the products themselves so the catalog stays
+  // in sync with whatever data source is active (local reference or backend).
+  const categories = useMemo(() => uniqueSorted(products.map((p) => p.category)), [products])
+  const compoundTypes = useMemo(
+    () => uniqueSorted(products.map((p) => p.compoundType)),
+    [products],
+  )
+  const goalOptions = useMemo(
+    () => uniqueSorted(products.flatMap((p) => p.goals)),
+    [products],
+  )
+  const systemOptions = useMemo(
+    () => uniqueSorted(products.flatMap((p) => p.systems)),
+    [products],
+  )
+
   const filtered = useMemo(() => {
-    let list = PRODUCTS.filter((p) => {
+    let list = products.filter((p) => {
       if (category && p.category !== category) return false
       if (goal && !p.goals.includes(goal)) return false
       if (system && !p.systems.includes(system)) return false
@@ -72,7 +88,7 @@ export function ProductCatalog() {
       }
     })
     return list
-  }, [search, category, goal, system, compoundType, sort])
+  }, [products, search, category, goal, system, compoundType, sort])
 
   const activeCount = [category, goal, system, compoundType].filter(Boolean).length
 
@@ -158,12 +174,12 @@ export function ProductCatalog() {
               )}
             </div>
 
-            <FilterGroup title="Category" options={CATEGORIES} selected={category} onSelect={setCategory} />
-            <FilterGroup title="Goal" options={GOAL_OPTIONS} selected={goal} onSelect={setGoal} />
-            <FilterGroup title="TRU System" options={SYSTEM_OPTIONS} selected={system} onSelect={setSystem} />
+            <FilterGroup title="Category" options={categories} selected={category} onSelect={setCategory} />
+            <FilterGroup title="Goal" options={goalOptions} selected={goal} onSelect={setGoal} />
+            <FilterGroup title="TRU System" options={systemOptions} selected={system} onSelect={setSystem} />
             <FilterGroup
               title="Compound Type"
-              options={COMPOUND_TYPES}
+              options={compoundTypes}
               selected={compoundType}
               onSelect={setCompoundType}
             />

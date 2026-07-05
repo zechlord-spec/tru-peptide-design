@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { FlaskConical, FileText, Eye, ArrowUpRight } from 'lucide-react'
-import { type Product } from '@/lib/products-data'
+import type { Product } from '@/lib/data/types'
 import { useRetailRange } from '@/lib/pricing/pricing-context'
 import { FavoriteButton } from '@/components/shop/favorite-button'
 import { VialImage } from '@/components/products/vial-image'

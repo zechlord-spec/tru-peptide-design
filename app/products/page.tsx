@@ -3,7 +3,7 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { ProductCatalog } from '@/components/products/product-catalog'
 import { FlaskConical } from 'lucide-react'
-import { PRODUCTS } from '@/lib/products-data'
+import { getDataSource } from '@/lib/data'
 
 export const metadata: Metadata = {
   title: 'Product Catalog | TRU PEPTIDE',
@@ -11,9 +11,11 @@ export const metadata: Metadata = {
     'Explore the full TRU PEPTIDE research catalog — premium research peptides organized by goal, TRU System, and compound type. For laboratory and research use only.',
 }
 
-export default function ProductsPage() {
-  const compoundCount = PRODUCTS.length
-  const variantCount = PRODUCTS.reduce((sum, p) => sum + p.variants.length, 0)
+export default async function ProductsPage() {
+  const data = getDataSource()
+  const products = await data.products.list()
+  const compoundCount = products.length
+  const variantCount = products.reduce((sum, p) => sum + p.variants.length, 0)
 
   return (
     <main id="top" className="min-h-screen bg-background">
@@ -56,7 +58,7 @@ export default function ProductsPage() {
 
       {/* Catalog */}
       <section className="pb-24">
-        <ProductCatalog />
+        <ProductCatalog products={products} />
       </section>
 
       {/* Compliance note */}

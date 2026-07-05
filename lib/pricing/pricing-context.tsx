@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, type ReactNode } from 'react'
-import type { Product } from '@/lib/products-data'
+import type { Product } from '@/lib/data/types'
 import {
   formatUSD,
   retailRangeFrom,

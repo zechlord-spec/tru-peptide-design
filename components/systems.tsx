@@ -1,12 +1,15 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
-import { SYSTEMS } from '@/lib/systems-data'
+import { getDataSource } from '@/lib/data'
+import { iconFor } from '@/lib/icons'
 
 const FEATURED = ['tru-glow', 'tru-perform', 'tru-longevity']
 
-export function Systems() {
-  const featured = FEATURED.map((slug) => SYSTEMS.find((s) => s.slug === slug)).filter(
+export async function Systems() {
+  const data = getDataSource()
+  const systems = await data.systems.list()
+  const featured = FEATURED.map((slug) => systems.find((s) => s.slug === slug)).filter(
     (s): s is NonNullable<typeof s> => Boolean(s),
   )
 
@@ -33,7 +36,7 @@ export function Systems() {
 
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {featured.map((sys) => {
-            const Icon = sys.icon
+            const Icon = iconFor(sys.iconKey)
             return (
               <Link
                 key={sys.slug}

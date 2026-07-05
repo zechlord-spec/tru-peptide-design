@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react'
 import { X, FlaskConical, FileText, Target, Layers } from 'lucide-react'
-import { type Product, vialLabel } from '@/lib/products-data'
+import type { Product } from '@/lib/data/types'
+import { vialLabel } from '@/lib/data/format'
 import { VialImage } from '@/components/products/vial-image'
 import { useRetailSnapshot, formatUSD } from '@/lib/pricing/pricing-context'
 import { retailUnitFrom } from '@/lib/pricing/format'

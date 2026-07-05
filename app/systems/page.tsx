@@ -4,7 +4,8 @@ import type { Metadata } from 'next'
 import { ArrowUpRight } from 'lucide-react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
-import { SYSTEMS } from '@/lib/systems-data'
+import { getDataSource } from '@/lib/data'
+import { iconFor } from '@/lib/icons'
 
 export const metadata: Metadata = {
   title: 'TRU Systems — Curated Research Collections | TRU PEPTIDE',
@@ -12,7 +13,10 @@ export const metadata: Metadata = {
     'Explore TRU Systems: curated educational collections of research compounds organized around goals like beauty, performance, longevity, recovery, and immunity.',
 }
 
-export default function SystemsHubPage() {
+export default async function SystemsHubPage() {
+  const data = getDataSource()
+  const systems = await data.systems.list()
+
   return (
     <main className="min-h-screen bg-background">
       <SiteHeader />
@@ -36,8 +40,8 @@ export default function SystemsHubPage() {
       {/* Systems grid */}
       <section className="px-4 pb-28">
         <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {SYSTEMS.map((system) => {
-            const Icon = system.icon
+          {systems.map((system) => {
+            const Icon = iconFor(system.iconKey)
             return (
               <Link
                 key={system.slug}

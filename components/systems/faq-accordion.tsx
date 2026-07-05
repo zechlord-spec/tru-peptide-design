@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Plus, Minus } from 'lucide-react'
-import type { SystemFaq } from '@/lib/systems-data'
+import type { SystemFaq } from '@/lib/data/types'
 
 export function FaqAccordion({ faqs }: { faqs: SystemFaq[] }) {
   const [open, setOpen] = useState<number | null>(0)

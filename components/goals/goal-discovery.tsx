@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { GOALS, type Goal } from '@/lib/goals-data'
+import type { Goal } from '@/lib/data/types'
+import { iconFor } from '@/lib/icons'
 import { Layers, FlaskConical, BookOpen, ArrowUpRight, ArrowLeft, Check } from 'lucide-react'
 
-export function GoalDiscovery() {
+export function GoalDiscovery({ goals }: { goals: Goal[] }) {
   const [selected, setSelected] = useState<Goal | null>(null)
 
   return (
@@ -13,14 +14,14 @@ export function GoalDiscovery() {
         {selected ? (
           <GoalDetail goal={selected} onBack={() => setSelected(null)} />
         ) : (
-          <GoalGrid onSelect={setSelected} />
+          <GoalGrid goals={goals} onSelect={setSelected} />
         )}
       </div>
     </section>
   )
 }
 
-function GoalGrid({ onSelect }: { onSelect: (g: Goal) => void }) {
+function GoalGrid({ goals, onSelect }: { goals: Goal[]; onSelect: (g: Goal) => void }) {
   return (
     <div>
       <div className="mb-3 flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-accent">
@@ -36,7 +37,9 @@ function GoalGrid({ onSelect }: { onSelect: (g: Goal) => void }) {
       </p>
 
       <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {GOALS.map((goal) => (
+        {goals.map((goal) => {
+          const GoalIcon = iconFor(goal.iconKey)
+          return (
           <button
             key={goal.slug}
             type="button"
@@ -44,7 +47,7 @@ function GoalGrid({ onSelect }: { onSelect: (g: Goal) => void }) {
             className="group flex flex-col items-start rounded-3xl border border-border/60 bg-card p-7 text-left shadow-[0_1px_2px_rgba(8,27,53,0.04)] transition-all duration-300 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-[0_30px_60px_-28px_rgba(8,27,53,0.3)]"
           >
             <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/5 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
-              <goal.icon className="h-6 w-6" strokeWidth={1.5} />
+              <GoalIcon className="h-6 w-6" strokeWidth={1.5} />
             </span>
             <h3 className="mt-6 font-heading text-xl font-bold text-primary">{goal.name}</h3>
             <p className="mt-1.5 text-sm leading-relaxed text-foreground/60">{goal.tagline}</p>
@@ -53,13 +56,15 @@ function GoalGrid({ onSelect }: { onSelect: (g: Goal) => void }) {
               <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </span>
           </button>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
 }
 
 function GoalDetail({ goal, onBack }: { goal: Goal; onBack: () => void }) {
+  const GoalIcon = iconFor(goal.iconKey)
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <button
@@ -74,7 +79,7 @@ function GoalDetail({ goal, onBack }: { goal: Goal; onBack: () => void }) {
       {/* Overview */}
       <div className="mt-8 grid gap-8 rounded-[2rem] border border-border/60 bg-card p-8 shadow-[0_1px_2px_rgba(8,27,53,0.04)] md:grid-cols-[auto_1fr] md:p-12">
         <span className="flex h-20 w-20 items-center justify-center rounded-3xl bg-primary text-primary-foreground">
-          <goal.icon className="h-9 w-9" strokeWidth={1.5} />
+          <GoalIcon className="h-9 w-9" strokeWidth={1.5} />
         </span>
         <div>
           <span className="text-xs font-semibold uppercase tracking-[0.22em] text-accent">

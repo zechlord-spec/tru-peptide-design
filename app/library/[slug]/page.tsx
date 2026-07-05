@@ -16,16 +16,17 @@ import {
 } from 'lucide-react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
-import { PRODUCTS, getProduct, getRelatedProducts } from '@/lib/products-data'
+import { getDataSource } from '@/lib/data'
+import { iconFor } from '@/lib/icons'
 import { getRetailSnapshot } from '@/lib/pricing/service'
 import { retailRangeFrom } from '@/lib/pricing/format'
 import { getTypeContent, getStorage } from '@/lib/product-content'
 import { getEduContent, getSafetyInfo } from '@/lib/library-content'
-import { SYSTEMS } from '@/lib/systems-data'
-import { GOALS } from '@/lib/goals-data'
 
-export function generateStaticParams() {
-  return PRODUCTS.map((p) => ({ slug: p.slug }))
+export async function generateStaticParams() {
+  const data = getDataSource()
+  const products = await data.products.list()
+  return products.map((p) => ({ slug: p.slug }))
 }
 
 export async function generateMetadata({
@@ -34,7 +35,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const product = getProduct(slug)
+  const data = getDataSource()
+  const product = await data.products.getBySlug(slug)
   if (!product) return { title: 'Compound Not Found | TRU PEPTIDE' }
   return {
     title: `${product.name} — Compound Library | TRU PEPTIDE`,
@@ -59,21 +61,26 @@ export default async function LibraryDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const product = getProduct(slug)
+  const data = getDataSource()
+  const product = await data.products.getBySlug(slug)
   if (!product) notFound()
 
   const type = getTypeContent(product)
   const edu = getEduContent(product)
   const safety = getSafetyInfo(product)
   const storage = getStorage(product)
-  const related = getRelatedProducts(product, 3)
-  const pricing = await getRetailSnapshot()
+  const [related, allSystems, allGoals, pricing] = await Promise.all([
+    data.products.getRelated(product.slug, 3),
+    data.systems.list(),
+    data.goals.list(),
+    getRetailSnapshot(),
+  ])
 
   const relatedSystems = product.systems
-    .map((name) => SYSTEMS.find((s) => s.name === name))
+    .map((name) => allSystems.find((s) => s.name === name))
     .filter((s): s is NonNullable<typeof s> => Boolean(s))
   const suggestedGoals = product.goals
-    .map((name) => GOALS.find((g) => g.name === name))
+    .map((name) => allGoals.find((g) => g.name === name))
     .filter((g): g is NonNullable<typeof g> => Boolean(g))
 
   return (
@@ -287,8 +294,8 @@ export default async function LibraryDetailPage({
             <h2 className="font-heading text-2xl font-bold text-primary">Suggested Goals</h2>
             <p className="mt-2 text-muted-foreground">Research objectives this compound is studied for.</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              {suggestedGoals.map((goal) => {
-                const Icon = goal.icon
+                {suggestedGoals.map((goal) => {
+                  const Icon = iconFor(goal.iconKey)
                 return (
                   <Link
                     key={goal.slug}
@@ -315,8 +322,8 @@ export default async function LibraryDetailPage({
               Curated collections that feature {product.name}.
             </p>
             <div className="mt-6 grid gap-5 sm:grid-cols-2">
-              {relatedSystems.map((system) => {
-                const Icon = system.icon
+                {relatedSystems.map((system) => {
+                  const Icon = iconFor(system.iconKey)
                 return (
                   <Link
                     key={system.slug}

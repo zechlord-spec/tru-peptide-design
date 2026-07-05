@@ -14,13 +14,16 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { FaqAccordion } from '@/components/systems/faq-accordion'
 import { SystemRecommendations } from '@/components/systems/system-recommendations'
-import { SYSTEMS, getSystem } from '@/lib/systems-data'
+import { getDataSource } from '@/lib/data'
+import { iconFor } from '@/lib/icons'
 
 // Recommendations read admin overrides from the database at request time.
 export const dynamic = 'force-dynamic'
 
-export function generateStaticParams() {
-  return SYSTEMS.map((s) => ({ slug: s.slug }))
+export async function generateStaticParams() {
+  const data = getDataSource()
+  const systems = await data.systems.list()
+  return systems.map((s) => ({ slug: s.slug }))
 }
 
 export async function generateMetadata({
@@ -29,7 +32,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const system = getSystem(slug)
+  const data = getDataSource()
+  const system = await data.systems.getBySlug(slug)
   if (!system) return { title: 'System Not Found | TRU PEPTIDE' }
   return {
     title: `${system.trademark} — ${system.category} | TRU PEPTIDE`,
@@ -43,12 +47,14 @@ export default async function SystemPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const system = getSystem(slug)
+  const data = getDataSource()
+  const system = await data.systems.getBySlug(slug)
   if (!system) notFound()
 
-  const Icon = system.icon
+  const Icon = iconFor(system.iconKey)
+  const allSystems = await data.systems.list()
   const related = system.related
-    .map((s) => getSystem(s))
+    .map((s) => allSystems.find((sys) => sys.slug === s))
     .filter((s): s is NonNullable<typeof s> => Boolean(s))
 
   return (
@@ -282,7 +288,7 @@ export default async function SystemPage({
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {related.map((rel) => {
-              const RelIcon = rel.icon
+              const RelIcon = iconFor(rel.iconKey)
               return (
                 <Link
                   key={rel.slug}
