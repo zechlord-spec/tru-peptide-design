@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { VialImage } from '@/components/products/vial-image'
 import {
@@ -18,7 +18,7 @@ import {
   User,
 } from 'lucide-react'
 import { useStore, money, type CoaDownload } from '@/lib/store'
-import { getProduct, type Product } from '@/lib/products-data'
+import type { Product } from '@/lib/data/types'
 import { useRetailSnapshot } from '@/lib/pricing/pricing-context'
 import { retailRangeFrom } from '@/lib/pricing/format'
 import { SignInForm } from '@/components/shop/sign-in-form'
@@ -34,9 +34,17 @@ const TABS: { id: TabId; label: string; icon: typeof Package }[] = [
   { id: 'settings', label: 'Account Settings', icon: Settings },
 ]
 
-export function Dashboard() {
+export function Dashboard({ products }: { products: Product[] }) {
   const store = useStore()
   const [tab, setTab] = useState<TabId>('orders')
+
+  // Build a slug -> product lookup so the client panels can resolve saved,
+  // favorited, and recently-viewed slugs without importing the data layer.
+  const productMap = useMemo(() => {
+    const map = new Map<string, Product>()
+    for (const product of products) map.set(product.slug, product)
+    return map
+  }, [products])
 
   if (!store.hydrated) {
     return (
@@ -133,6 +141,7 @@ export function Dashboard() {
           {tab === 'orders' && <OrdersPanel orders={orders} />}
           {tab === 'saved' && (
             <ProductGridPanel
+              productMap={productMap}
               slugs={saved}
               emptyIcon={Bookmark}
               emptyTitle="No saved products"
@@ -144,6 +153,7 @@ export function Dashboard() {
           {tab === 'coa' && <CoaPanel downloads={coaDownloads} />}
           {tab === 'favorites' && (
             <ProductGridPanel
+              productMap={productMap}
               slugs={favorites}
               emptyIcon={Heart}
               emptyTitle="No favorites yet"
@@ -154,6 +164,7 @@ export function Dashboard() {
           )}
           {tab === 'recent' && (
             <ProductGridPanel
+              productMap={productMap}
               slugs={recentlyViewed}
               emptyIcon={Clock}
               emptyTitle="Nothing viewed yet"
@@ -220,6 +231,7 @@ function OrdersPanel({ orders }: { orders: ReturnType<typeof useStore>['orders']
 }
 
 function ProductGridPanel({
+  productMap,
   slugs,
   emptyIcon,
   emptyTitle,
@@ -227,6 +239,7 @@ function ProductGridPanel({
   onRemove,
   removeLabel,
 }: {
+  productMap: Map<string, Product>
   slugs: string[]
   emptyIcon: typeof Heart
   emptyTitle: string
@@ -236,7 +249,7 @@ function ProductGridPanel({
 }) {
   const snapshot = useRetailSnapshot()
   const products = slugs
-    .map((s) => getProduct(s))
+    .map((s) => productMap.get(s))
     .filter((p): p is Product => Boolean(p))
 
   if (products.length === 0) {
