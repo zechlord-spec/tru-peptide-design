@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, Space_Grotesk } from 'next/font/google'
 import { Providers } from '@/components/shop/providers'
 import { getDataSource } from '@/lib/data'
-import './globals.css'
+import '../styles/globals.css'
 
 const inter = Inter({
   subsets: ['latin'],

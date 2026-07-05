@@ -27,7 +27,6 @@ import { CoaDownloadButton } from '@/components/shop/coa-download-button'
 import { getDataSource } from '@/lib/data'
 import { vialLabel } from '@/lib/data/format'
 import { iconFor } from '@/lib/icons'
-import { getRetailSnapshot } from '@/lib/pricing/service'
 import { retailUnitFrom, retailRangeFrom, formatUSD } from '@/lib/pricing/format'
 import {
   getTypeContent,
@@ -75,7 +74,7 @@ export default async function ProductPage({
     data.products.getRelated(product.slug),
     data.systems.list(),
     data.goals.list(),
-    getRetailSnapshot(),
+    data.pricing.getRetailSnapshot(),
   ])
 
   const relatedSystems = product.systems

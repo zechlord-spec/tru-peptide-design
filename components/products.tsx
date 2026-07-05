@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import { getDataSource } from '@/lib/data'
-import { getRetailSnapshot } from '@/lib/pricing/service'
 import { retailRangeFrom } from '@/lib/pricing/format'
 import { VialImage } from '@/components/products/vial-image'
 
@@ -14,7 +13,10 @@ import { VialImage } from '@/components/products/vial-image'
  */
 export async function Products() {
   const data = getDataSource()
-  const [products, snapshot] = await Promise.all([data.products.list(), getRetailSnapshot()])
+  const [products, snapshot] = await Promise.all([
+    data.products.list(),
+    data.pricing.getRetailSnapshot(),
+  ])
 
   const featured = [...products]
     .sort((a, b) => Number(Boolean(b.isNew)) - Number(Boolean(a.isNew)))

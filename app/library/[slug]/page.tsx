@@ -18,7 +18,6 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { getDataSource } from '@/lib/data'
 import { iconFor } from '@/lib/icons'
-import { getRetailSnapshot } from '@/lib/pricing/service'
 import { retailRangeFrom } from '@/lib/pricing/format'
 import { getTypeContent, getStorage } from '@/lib/product-content'
 import { getEduContent, getSafetyInfo } from '@/lib/library-content'
@@ -73,7 +72,7 @@ export default async function LibraryDetailPage({
     data.products.getRelated(product.slug, 3),
     data.systems.list(),
     data.goals.list(),
-    getRetailSnapshot(),
+    data.pricing.getRetailSnapshot(),
   ])
 
   const relatedSystems = product.systems
