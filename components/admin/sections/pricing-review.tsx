@@ -7,7 +7,7 @@ import {
   getReviewQueueAction,
   approveReviewAction,
   dismissReviewAction,
-} from '@/app/actions/pricing'
+} from '@/lib/client/pricing-admin'
 import { SectionHeader, StatCard, TableCard, Th, Td, EmptyState } from '@/components/admin/ui'
 
 function money(n: number | null | undefined) {

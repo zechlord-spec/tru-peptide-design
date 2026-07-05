@@ -11,8 +11,8 @@ import {
   RefreshCw,
   Clock,
 } from 'lucide-react'
-import type { PricingChange } from '@/lib/db/schema'
-import { getPricingReportsAction, refreshPricingAction } from '@/app/actions/pricing'
+import type { PricingChange } from '@/lib/pricing/types'
+import { getPricingReportsAction, refreshPricingAction } from '@/lib/client/pricing-admin'
 import { SectionHeader, StatCard, TableCard, Th, Td, EmptyState } from '@/components/admin/ui'
 
 function money(n: number) {

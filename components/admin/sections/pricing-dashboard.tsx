@@ -3,13 +3,13 @@
 import { useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { DollarSign, Percent, ShieldAlert, AlertTriangle, RefreshCw, Tag } from 'lucide-react'
-import type { PricingMode } from '@/lib/db/schema'
+import type { PricingMode } from '@/lib/pricing/types'
 import {
   getPricingDashboardAction,
   refreshPricingAction,
   setGlobalSalePercentAction,
   setPricingModeAction,
-} from '@/app/actions/pricing'
+} from '@/lib/client/pricing-admin'
 import { SectionHeader, StatCard, TableCard, Th, Td, Chip, Toolbar, EmptyState } from '@/components/admin/ui'
 
 function money(n: number | null | undefined) {

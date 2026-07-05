@@ -1,5 +1,5 @@
 import { Layers, Sparkles, Info } from 'lucide-react'
-import { getSystemRecommendations } from '@/lib/catalog/recommendations'
+import { getDataSource } from '@/lib/data'
 import { RecommendationCard } from './recommendation-card'
 import { StackCard } from './stack-card'
 
@@ -10,7 +10,9 @@ export async function SystemRecommendations({
   systemSlug: string
   systemName: string
 }) {
-  const { products, stacks, note, tags } = await getSystemRecommendations(systemSlug)
+  const { products, stacks, note, tags } = await getDataSource().systems.getRecommendations(
+    systemSlug,
+  )
 
   return (
     <div className="flex flex-col gap-14">

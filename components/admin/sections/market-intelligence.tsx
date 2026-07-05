@@ -2,7 +2,7 @@
 
 import useSWR from 'swr'
 import { Radar, Database, ShieldCheck, Target } from 'lucide-react'
-import { getPricingDashboardAction } from '@/app/actions/pricing'
+import { getPricingDashboardAction } from '@/lib/client/pricing-admin'
 import { SectionHeader, StatCard, TableCard, Th, Td, EmptyState } from '@/components/admin/ui'
 
 function money(n: number | null) {

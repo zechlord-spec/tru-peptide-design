@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { Layers, Boxes, Tags, Star, Search } from 'lucide-react'
-import { getAdminCatalogAction } from '@/app/actions/catalog'
+import { getAdminCatalogAction } from '@/lib/client/catalog-admin'
 import { SectionHeader, StatCard, EmptyState } from '@/components/admin/ui'
 import { SystemEditor } from '@/components/admin/systems/system-editor'
 import { ProductTagsEditor } from '@/components/admin/systems/product-tags-editor'

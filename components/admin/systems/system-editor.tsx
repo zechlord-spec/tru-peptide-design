@@ -22,7 +22,7 @@ import {
   setSystemNoteAction,
   setSystemPinAction,
   updateStackAction,
-} from '@/app/actions/catalog'
+} from '@/lib/client/catalog-admin'
 import { EmptyState } from '@/components/admin/ui'
 
 function nameFor(products: AdminProduct[], slug: string) {

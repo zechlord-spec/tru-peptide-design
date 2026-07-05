@@ -7,7 +7,7 @@ import type { AdminProduct } from '@/lib/catalog/types'
 import {
   setProductFeaturedAction,
   setProductTagsAction,
-} from '@/app/actions/catalog'
+} from '@/lib/client/catalog-admin'
 import { Chip, EmptyState } from '@/components/admin/ui'
 
 export function ProductTagsEditor({
