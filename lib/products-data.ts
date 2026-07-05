@@ -1,7 +1,6 @@
 export type ProductVariant = {
   catNo: string
   spec: string
-  price: number
 }
 
 export type Product = {
@@ -32,14 +31,14 @@ export const PRODUCTS: Product[] = [
       'A triple-agonist incretin mimetic studied for its effects on appetite regulation, energy expenditure, and metabolic balance.',
     isNew: true,
     variants: [
-      { catNo: 'RT5', spec: '5mg × 10 vials', price: 74 },
-      { catNo: 'RT10', spec: '10mg × 10 vials', price: 117 },
-      { catNo: 'RT15', spec: '15mg × 10 vials', price: 157 },
-      { catNo: 'RT20', spec: '20mg × 10 vials', price: 171 },
-      { catNo: 'RT30', spec: '30mg × 10 vials', price: 213 },
-      { catNo: 'RT40', spec: '40mg × 10 vials', price: 260 },
-      { catNo: 'RT50', spec: '50mg × 10 vials', price: 340 },
-      { catNo: 'RT60', spec: '60mg × 10 vials', price: 471 },
+      { catNo: 'RT5', spec: '5mg × 10 vials' },
+      { catNo: 'RT10', spec: '10mg × 10 vials' },
+      { catNo: 'RT15', spec: '15mg × 10 vials' },
+      { catNo: 'RT20', spec: '20mg × 10 vials' },
+      { catNo: 'RT30', spec: '30mg × 10 vials' },
+      { catNo: 'RT40', spec: '40mg × 10 vials' },
+      { catNo: 'RT50', spec: '50mg × 10 vials' },
+      { catNo: 'RT60', spec: '60mg × 10 vials' },
     ],
   },
   {
@@ -54,16 +53,16 @@ export const PRODUCTS: Product[] = [
       'A dual GIP/GLP-1 receptor agonist researched for satiety signaling, glucose handling, and body composition.',
     isNew: true,
     variants: [
-      { catNo: 'TR5', spec: '5mg × 10 vials', price: 51 },
-      { catNo: 'TR10', spec: '10mg × 10 vials', price: 71 },
-      { catNo: 'TR15', spec: '15mg × 10 vials', price: 83 },
-      { catNo: 'TR20', spec: '20mg × 10 vials', price: 109 },
-      { catNo: 'TR30', spec: '30mg × 10 vials', price: 143 },
-      { catNo: 'TR40', spec: '40mg × 10 vials', price: 183 },
-      { catNo: 'TR50', spec: '50mg × 10 vials', price: 217 },
-      { catNo: 'TR60', spec: '60mg × 10 vials', price: 251 },
-      { catNo: 'TR80', spec: '80mg × 10 vials', price: 371 },
-      { catNo: 'TR100', spec: '100mg × 10 vials', price: 390 },
+      { catNo: 'TR5', spec: '5mg × 10 vials' },
+      { catNo: 'TR10', spec: '10mg × 10 vials' },
+      { catNo: 'TR15', spec: '15mg × 10 vials' },
+      { catNo: 'TR20', spec: '20mg × 10 vials' },
+      { catNo: 'TR30', spec: '30mg × 10 vials' },
+      { catNo: 'TR40', spec: '40mg × 10 vials' },
+      { catNo: 'TR50', spec: '50mg × 10 vials' },
+      { catNo: 'TR60', spec: '60mg × 10 vials' },
+      { catNo: 'TR80', spec: '80mg × 10 vials' },
+      { catNo: 'TR100', spec: '100mg × 10 vials' },
     ],
   },
   {
@@ -77,9 +76,9 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A GLP-1 receptor agonist studied for appetite modulation and metabolic regulation.',
     variants: [
-      { catNo: 'SM10', spec: '10mg × 10 vials', price: 57 },
-      { catNo: 'SM20', spec: '20mg × 10 vials', price: 86 },
-      { catNo: 'SM30', spec: '30mg × 10 vials', price: 137 },
+      { catNo: 'SM10', spec: '10mg × 10 vials' },
+      { catNo: 'SM20', spec: '20mg × 10 vials' },
+      { catNo: 'SM30', spec: '30mg × 10 vials' },
     ],
   },
   {
@@ -93,8 +92,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A long-acting amylin analog investigated for satiety and complementary metabolic signaling.',
     variants: [
-      { catNo: 'CGL5', spec: '5mg × 10 vials', price: 143 },
-      { catNo: 'CGL10', spec: '10mg × 10 vials', price: 240 },
+      { catNo: 'CGL5', spec: '5mg × 10 vials' },
+      { catNo: 'CGL10', spec: '10mg × 10 vials' },
     ],
   },
   {
@@ -108,10 +107,10 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A mitochondrial-derived peptide studied for its role in metabolic homeostasis and exercise capacity.',
     variants: [
-      { catNo: 'MS10', spec: '10mg × 10 vials', price: 86 },
-      { catNo: 'MS15', spec: '15mg × 10 vials', price: 129 },
-      { catNo: 'MS20', spec: '20mg × 10 vials', price: 149 },
-      { catNo: 'MS40', spec: '40mg × 10 vials', price: 277 },
+      { catNo: 'MS10', spec: '10mg × 10 vials' },
+      { catNo: 'MS15', spec: '15mg × 10 vials' },
+      { catNo: 'MS20', spec: '20mg × 10 vials' },
+      { catNo: 'MS40', spec: '40mg × 10 vials' },
     ],
   },
   {
@@ -125,9 +124,9 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A small molecule NNMT inhibitor researched for its influence on cellular energy metabolism and fat cell activity.',
     variants: [
-      { catNo: '5AM', spec: '5mg × 10 vials', price: 31 },
-      { catNo: '10AM', spec: '10mg × 10 vials', price: 37 },
-      { catNo: '50AM', spec: '50mg × 10 vials', price: 110 },
+      { catNo: '5AM', spec: '5mg × 10 vials' },
+      { catNo: '10AM', spec: '10mg × 10 vials' },
+      { catNo: '50AM', spec: '50mg × 10 vials' },
     ],
   },
   {
@@ -141,9 +140,9 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A growth-hormone-releasing hormone analog studied for visceral fat reduction and body composition.',
     variants: [
-      { catNo: 'TSM5', spec: '5mg × 10 vials', price: 117 },
-      { catNo: 'TSM10', spec: '10mg × 10 vials', price: 214 },
-      { catNo: 'TSM20', spec: '20mg × 10 vials', price: 371 },
+      { catNo: 'TSM5', spec: '5mg × 10 vials' },
+      { catNo: 'TSM10', spec: '10mg × 10 vials' },
+      { catNo: 'TSM20', spec: '20mg × 10 vials' },
     ],
   },
   {
@@ -156,7 +155,7 @@ export const PRODUCTS: Product[] = [
     image: '/catalog/vial-metabolic.png',
     blurb:
       'An amino acid derivative studied for fatty acid transport and cellular energy production.',
-    variants: [{ catNo: 'LC1200', spec: '1200mg × 10 vials', price: 69 }],
+    variants: [{ catNo: 'LC1200', spec: '1200mg × 10 vials' }],
   },
   {
     slug: 'lipo-c',
@@ -168,7 +167,7 @@ export const PRODUCTS: Product[] = [
     image: '/catalog/vial-metabolic.png',
     blurb:
       'A lipotropic blend researched in the context of fat metabolism and energy support.',
-    variants: [{ catNo: 'Lipo-c', spec: '10ml × 10 vials', price: 67 }],
+    variants: [{ catNo: 'Lipo-c', spec: '10ml × 10 vials' }],
   },
   {
     slug: 'mic-b12',
@@ -180,7 +179,7 @@ export const PRODUCTS: Product[] = [
     image: '/catalog/vial-metabolic.png',
     blurb:
       'A methionine-inositol-choline complex with B12, studied for lipid metabolism and energy support.',
-    variants: [{ catNo: 'MIC', spec: '10ml × 10 vials', price: 120 }],
+    variants: [{ catNo: 'MIC', spec: '10ml × 10 vials' }],
   },
   {
     slug: 'lemon-bottle',
@@ -192,7 +191,7 @@ export const PRODUCTS: Product[] = [
     image: '/catalog/vial-cosmetic.png',
     blurb:
       'A lipolytic solution researched in the context of localized fat metabolism.',
-    variants: [{ catNo: '柠檬水', spec: '10ml × 10 vials', price: 67 }],
+    variants: [{ catNo: '柠檬水', spec: '10ml × 10 vials' }],
   },
 
   {
@@ -206,8 +205,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A body-protection compound studied extensively for tissue repair, gut integrity, and recovery.',
     variants: [
-      { catNo: 'BC5', spec: '5mg × 10 vials', price: 46 },
-      { catNo: 'BC10', spec: '10mg × 10 vials', price: 60 },
+      { catNo: 'BC5', spec: '5mg × 10 vials' },
+      { catNo: 'BC10', spec: '10mg × 10 vials' },
     ],
   },
   {
@@ -222,8 +221,8 @@ export const PRODUCTS: Product[] = [
       'A combined healing blend researched for synergistic tissue repair and recovery support.',
     isNew: true,
     variants: [
-      { catNo: 'BB10', spec: 'BPC 5mg + TB 5mg × 10 vials', price: 109 },
-      { catNo: 'BB20', spec: 'BPC 10mg + TB 10mg × 10 vials', price: 200 },
+      { catNo: 'BB10', spec: 'BPC 5mg + TB 5mg × 10 vials' },
+      { catNo: 'BB20', spec: 'BPC 10mg + TB 10mg × 10 vials' },
     ],
   },
   {
@@ -237,8 +236,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A synthetic fragment of thymosin beta-4 studied for cellular migration, flexibility, and tissue repair.',
     variants: [
-      { catNo: 'BT5', spec: '5mg × 10 vials', price: 100 },
-      { catNo: 'BT10', spec: '10mg × 10 vials', price: 171 },
+      { catNo: 'BT5', spec: '5mg × 10 vials' },
+      { catNo: 'BT10', spec: '10mg × 10 vials' },
     ],
   },
   {
@@ -252,8 +251,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A tripeptide fragment of alpha-MSH studied for its anti-inflammatory and repair-supporting properties.',
     variants: [
-      { catNo: 'KPV5', spec: '5mg × 10 vials', price: 47 },
-      { catNo: 'KPV10', spec: '10mg × 10 vials', price: 60 },
+      { catNo: 'KPV5', spec: '5mg × 10 vials' },
+      { catNo: 'KPV10', spec: '10mg × 10 vials' },
     ],
   },
   {
@@ -266,7 +265,7 @@ export const PRODUCTS: Product[] = [
     image: '/catalog/vial-growth.png',
     blurb:
       'A long-acting insulin-like growth factor analog studied for cellular growth and recovery signaling.',
-    variants: [{ catNo: 'IG1-1', spec: '1mg × 10 vials', price: 229 }],
+    variants: [{ catNo: 'IG1-1', spec: '1mg × 10 vials' }],
   },
 
   {
@@ -280,8 +279,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A GHRH analog with drug affinity complex studied for sustained growth hormone signaling.',
     variants: [
-      { catNo: 'CD5', spec: '5mg × 10 vials', price: 194 },
-      { catNo: 'CD10', spec: '10mg × 10 vials', price: 248 },
+      { catNo: 'CD5', spec: '5mg × 10 vials' },
+      { catNo: 'CD10', spec: '10mg × 10 vials' },
     ],
   },
   {
@@ -295,8 +294,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A modified GHRH peptide (Mod GRF 1-29) researched for pulsatile growth hormone release.',
     variants: [
-      { catNo: 'CND5', spec: '5mg × 10 vials', price: 81 },
-      { catNo: 'CND10', spec: '10mg × 10 vials', price: 136 },
+      { catNo: 'CND5', spec: '5mg × 10 vials' },
+      { catNo: 'CND10', spec: '10mg × 10 vials' },
     ],
   },
   {
@@ -310,7 +309,7 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A synergistic GHRH + GHRP blend studied for amplified growth hormone signaling.',
     variants: [
-      { catNo: 'CP10', spec: 'CJC 5mg + IPA 5mg × 10 vials', price: 101 },
+      { catNo: 'CP10', spec: 'CJC 5mg + IPA 5mg × 10 vials' },
     ],
   },
   {
@@ -324,8 +323,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A selective growth hormone secretagogue studied for its clean GH release profile.',
     variants: [
-      { catNo: 'IP5', spec: '5mg × 10 vials', price: 47 },
-      { catNo: 'IP10', spec: '10mg × 10 vials', price: 66 },
+      { catNo: 'IP5', spec: '5mg × 10 vials' },
+      { catNo: 'IP10', spec: '10mg × 10 vials' },
     ],
   },
   {
@@ -339,8 +338,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A GHRH analog studied for stimulating natural growth hormone production.',
     variants: [
-      { catNo: 'SMO5', spec: '5mg × 10 vials', price: 89 },
-      { catNo: 'SMO10', spec: '10mg × 10 vials', price: 146 },
+      { catNo: 'SMO5', spec: '5mg × 10 vials' },
+      { catNo: 'SMO10', spec: '10mg × 10 vials' },
     ],
   },
 
@@ -355,8 +354,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A tetrapeptide studied for its influence on telomerase activity and cellular aging.',
     variants: [
-      { catNo: 'ET10', spec: '10mg × 10 vials', price: 54 },
-      { catNo: 'ET50', spec: '50mg × 10 vials', price: 159 },
+      { catNo: 'ET10', spec: '10mg × 10 vials' },
+      { catNo: 'ET50', spec: '50mg × 10 vials' },
     ],
   },
   {
@@ -370,9 +369,9 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A coenzyme central to cellular energy production and DNA repair, studied for healthy aging.',
     variants: [
-      { catNo: 'NJ100', spec: '100mg × 10 vials', price: 43 },
-      { catNo: 'NJ500', spec: '500mg × 10 vials', price: 51 },
-      { catNo: 'NJ1000', spec: '1000mg × 10 vials', price: 70 },
+      { catNo: 'NJ100', spec: '100mg × 10 vials' },
+      { catNo: 'NJ500', spec: '500mg × 10 vials' },
+      { catNo: 'NJ1000', spec: '1000mg × 10 vials' },
     ],
   },
   {
@@ -386,8 +385,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A mitochondria-targeting peptide studied for protecting and optimizing cellular energy machinery.',
     variants: [
-      { catNo: '2S10', spec: '10mg × 10 vials', price: 96 },
-      { catNo: '2S50', spec: '50mg × 10 vials', price: 349 },
+      { catNo: '2S10', spec: '10mg × 10 vials' },
+      { catNo: '2S50', spec: '50mg × 10 vials' },
     ],
   },
   {
@@ -400,7 +399,7 @@ export const PRODUCTS: Product[] = [
     image: '/catalog/vial-longevity.png',
     blurb:
       'A senolytic peptide researched for its role in clearing senescent cells.',
-    variants: [{ catNo: 'Fox10', spec: '10mg × 10 vials', price: 634 }],
+    variants: [{ catNo: 'Fox10', spec: '10mg × 10 vials' }],
   },
   {
     slug: 'glutathione',
@@ -413,8 +412,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'The body\u2019s master antioxidant, studied for detoxification, skin brightness, and cellular protection.',
     variants: [
-      { catNo: 'GTT600', spec: '600mg × 10 vials', price: 31 },
-      { catNo: 'GTT1500', spec: '1500mg × 10 vials', price: 117 },
+      { catNo: 'GTT600', spec: '600mg × 10 vials' },
+      { catNo: 'GTT1500', spec: '1500mg × 10 vials' },
     ],
   },
 
@@ -429,8 +428,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A copper tripeptide studied for skin remodeling, collagen support, and regeneration.',
     variants: [
-      { catNo: 'CU50', spec: '50mg × 10 vials', price: 34 },
-      { catNo: 'CU100', spec: '100mg × 10 vials', price: 37 },
+      { catNo: 'CU50', spec: '50mg × 10 vials' },
+      { catNo: 'CU100', spec: '100mg × 10 vials' },
     ],
   },
   {
@@ -444,8 +443,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A copper peptide studied for hair follicle support and scalp health.',
     variants: [
-      { catNo: 'AU50', spec: '50mg × 10 vials', price: 60 },
-      { catNo: 'AU100', spec: '100mg × 10 vials', price: 90 },
+      { catNo: 'AU50', spec: '50mg × 10 vials' },
+      { catNo: 'AU100', spec: '100mg × 10 vials' },
     ],
   },
   {
@@ -459,7 +458,7 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A signature beauty blend combining repair and regeneration peptides for skin radiance.',
     isNew: true,
-    variants: [{ catNo: 'GLOW', spec: '70mg × 10 vials', price: 214 }],
+    variants: [{ catNo: 'GLOW', spec: '70mg × 10 vials' }],
   },
   {
     slug: 'klow-blend',
@@ -472,7 +471,7 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A premium blend formulated for skin, recovery, and regenerative support.',
     isNew: true,
-    variants: [{ catNo: 'KLOW', spec: '80mg × 10 vials', price: 280 }],
+    variants: [{ catNo: 'KLOW', spec: '80mg × 10 vials' }],
   },
   {
     slug: 'snap-8',
@@ -484,7 +483,7 @@ export const PRODUCTS: Product[] = [
     image: '/catalog/vial-cosmetic.png',
     blurb:
       'An octapeptide studied topically for the appearance of expression lines.',
-    variants: [{ catNo: 'snap810', spec: '10mg × 10 vials', price: 46 }],
+    variants: [{ catNo: 'snap810', spec: '10mg × 10 vials' }],
   },
   {
     slug: 'melanotan-2',
@@ -496,7 +495,7 @@ export const PRODUCTS: Product[] = [
     image: '/catalog/vial-cosmetic.png',
     blurb:
       'A melanocortin analog studied for its effects on pigmentation and libido.',
-    variants: [{ catNo: 'MT2', spec: '10mg × 10 vials', price: 82 }],
+    variants: [{ catNo: 'MT2', spec: '10mg × 10 vials' }],
   },
 
   {
@@ -510,8 +509,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'An anxiolytic peptide studied for calm focus, stress resilience, and cognitive support.',
     variants: [
-      { catNo: 'SK5', spec: '5mg × 10 vials', price: 47 },
-      { catNo: 'SK10', spec: '10mg × 10 vials', price: 66 },
+      { catNo: 'SK5', spec: '5mg × 10 vials' },
+      { catNo: 'SK10', spec: '10mg × 10 vials' },
     ],
   },
   {
@@ -525,8 +524,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A neuropeptide studied for focus, memory, and neuroprotective signaling.',
     variants: [
-      { catNo: 'SX5', spec: '5mg × 10 vials', price: 47 },
-      { catNo: 'SX10', spec: '10mg × 10 vials', price: 66 },
+      { catNo: 'SX5', spec: '5mg × 10 vials' },
+      { catNo: 'SX10', spec: '10mg × 10 vials' },
     ],
   },
   {
@@ -540,8 +539,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'Delta sleep-inducing peptide, studied for its influence on sleep architecture and stress.',
     variants: [
-      { catNo: 'DS5', spec: '5mg × 10 vials', price: 54 },
-      { catNo: 'DS10', spec: '10mg × 10 vials', price: 90 },
+      { catNo: 'DS5', spec: '5mg × 10 vials' },
+      { catNo: 'DS10', spec: '10mg × 10 vials' },
     ],
   },
 
@@ -555,7 +554,7 @@ export const PRODUCTS: Product[] = [
     image: '/catalog/vial-hormonal.png',
     blurb:
       'A melanocortin receptor agonist studied for libido and sexual response.',
-    variants: [{ catNo: 'P41', spec: '10mg × 10 vials', price: 77 }],
+    variants: [{ catNo: 'P41', spec: '10mg × 10 vials' }],
   },
   {
     slug: 'kisspeptin-10',
@@ -568,8 +567,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A hypothalamic peptide studied for its role in reproductive hormone signaling.',
     variants: [
-      { catNo: 'KS5', spec: '5mg × 10 vials', price: 57 },
-      { catNo: 'KS10', spec: '10mg × 10 vials', price: 89 },
+      { catNo: 'KS5', spec: '5mg × 10 vials' },
+      { catNo: 'KS10', spec: '10mg × 10 vials' },
     ],
   },
 
@@ -584,8 +583,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'A thymic peptide studied for immune modulation and defense signaling.',
     variants: [
-      { catNo: 'TA5', spec: '5mg × 10 vials', price: 114 },
-      { catNo: 'TA10', spec: '10mg × 10 vials', price: 186 },
+      { catNo: 'TA5', spec: '5mg × 10 vials' },
+      { catNo: 'TA10', spec: '10mg × 10 vials' },
     ],
   },
   {
@@ -598,7 +597,7 @@ export const PRODUCTS: Product[] = [
     image: '/catalog/vial-immune.png',
     blurb:
       'A thymic peptide complex studied for immune restoration and healthy aging.',
-    variants: [{ catNo: 'TY10', spec: '10mg × 10 vials', price: 77 }],
+    variants: [{ catNo: 'TY10', spec: '10mg × 10 vials' }],
   },
   {
     slug: 'vip',
@@ -611,8 +610,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'Vasoactive intestinal peptide, studied for immune balance and inflammatory signaling.',
     variants: [
-      { catNo: 'VP5', spec: '5mg × 10 vials', price: 89 },
-      { catNo: 'VP10', spec: '10mg × 10 vials', price: 149 },
+      { catNo: 'VP5', spec: '5mg × 10 vials' },
+      { catNo: 'VP10', spec: '10mg × 10 vials' },
     ],
   },
   {
@@ -625,7 +624,7 @@ export const PRODUCTS: Product[] = [
     image: '/catalog/vial-metabolic.png',
     blurb:
       'An essential cofactor studied for energy metabolism and neurological support.',
-    variants: [{ catNo: 'B12', spec: '10ml × 10 vials', price: 48 }],
+    variants: [{ catNo: 'B12', spec: '10ml × 10 vials' }],
   },
 
   {
@@ -639,8 +638,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       'Sterile bacteriostatic water for reconstitution of lyophilized research compounds.',
     variants: [
-      { catNo: 'BAC3', spec: '3ml × 10 vials', price: 19 },
-      { catNo: 'BAC10', spec: '10ml × 10 vials', price: 23 },
+      { catNo: 'BAC3', spec: '3ml × 10 vials' },
+      { catNo: 'BAC10', spec: '10ml × 10 vials' },
     ],
   },
 ]
@@ -650,24 +649,7 @@ export const COMPOUND_TYPES = Array.from(new Set(PRODUCTS.map((p) => p.compoundT
 export const GOAL_OPTIONS = Array.from(new Set(PRODUCTS.flatMap((p) => p.goals))).sort()
 export const SYSTEM_OPTIONS = Array.from(new Set(PRODUCTS.flatMap((p) => p.systems))).sort()
 
-// NOTE: variant.price is the INTERNAL supplier box price (a full box of vials).
-// It is never shown to customers — the storefront only ever displays the
-// per-vial retail price produced by the market pricing service. Box economics
-// live exclusively in the admin panel.
-
-// Supplier box price for a variant (internal / admin only).
-export function supplierBoxPrice(v: ProductVariant): number {
-  return v.price
-}
-
-// Number of vials packed in a supplier box, parsed from the internal spec
-// (e.g. "5mg × 10 vials" -> 10). Internal use only.
-export function vialsPerBox(spec: string): number {
-  const m = spec.match(/×\s*(\d+)\s*vials?/i)
-  return m ? Number(m[1]) : 1
-}
-
-// Customer-facing per-vial dose, parsed from the internal spec
+// Customer-facing per-vial dose, parsed from the spec
 // (e.g. "5mg × 10 vials" -> "5mg", "3ml × 10 vials" -> "3ml").
 export function vialDose(spec: string): string {
   const m = spec.match(/^\s*([\d.]+\s*m[gl])/i)
@@ -678,19 +660,6 @@ export function vialDose(spec: string): string {
 // Customer-facing single-vial label (e.g. "5mg vial"). No box language.
 export function vialLabel(spec: string): string {
   return `${vialDose(spec)} vial`
-}
-
-// Internal wholesale cost per vial (supplier box price / vials per box).
-export function wholesalePerVial(v: ProductVariant): number {
-  return v.price / vialsPerBox(v.spec)
-}
-
-// Internal supplier box price range — admin only.
-export function priceRange(p: Product): string {
-  const prices = p.variants.map((v) => v.price)
-  const min = Math.min(...prices)
-  const max = Math.max(...prices)
-  return min === max ? `$${min}` : `$${min} \u2013 $${max}`
 }
 
 export function getProduct(slug: string): Product | undefined {

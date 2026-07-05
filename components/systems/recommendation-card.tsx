@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Star, Plus, ArrowUpRight, Check, Flame, Sparkles } from 'lucide-react'
+import { Plus, ArrowUpRight, Check } from 'lucide-react'
 import { useState } from 'react'
 import { vialDose } from '@/lib/data/format'
 import { useRetailSnapshot } from '@/lib/pricing/pricing-context'
@@ -10,31 +10,8 @@ import { VialImage } from '@/components/products/vial-image'
 import { useStore } from '@/lib/store'
 import type { RankedProduct } from '@/lib/catalog/types'
 
-export function StarRating({ rating, reviewCount }: { rating: number; reviewCount: number }) {
-  return (
-    <div className="flex items-center gap-1.5" aria-label={`Rated ${rating} out of 5`}>
-      <div className="flex items-center">
-        {[1, 2, 3, 4, 5].map((i) => {
-          const fill = Math.max(0, Math.min(1, rating - (i - 1)))
-          return (
-            <span key={i} className="relative inline-block h-3.5 w-3.5">
-              <Star className="absolute inset-0 h-3.5 w-3.5 text-border" aria-hidden="true" />
-              <span className="absolute inset-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
-                <Star className="h-3.5 w-3.5 fill-accent text-accent" aria-hidden="true" />
-              </span>
-            </span>
-          )
-        })}
-      </div>
-      <span className="text-xs font-medium text-muted-foreground">
-        {rating.toFixed(1)} ({reviewCount})
-      </span>
-    </div>
-  )
-}
-
 export function RecommendationCard({ item }: { item: RankedProduct }) {
-  const { product, rating, reviewCount, bestSeller, featured, benefit } = item
+  const { product, benefit } = item
   const snapshot = useRetailSnapshot()
   const { addItem } = useStore()
   const [added, setAdded] = useState(false)
@@ -69,25 +46,13 @@ export function RecommendationCard({ item }: { item: RankedProduct }) {
             sizes="(max-width: 768px) 50vw, 25vw"
           />
         </div>
-        <div className="absolute left-3 top-3 flex flex-col gap-1.5">
-          {bestSeller && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground shadow-sm">
-              <Flame className="h-3 w-3" aria-hidden="true" />
-              Best Seller
-            </span>
-          )}
-          {product.isNew && (
+        {product.isNew && (
+          <div className="absolute left-3 top-3 flex flex-col gap-1.5">
             <span className="inline-flex items-center rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-sm">
               New
             </span>
-          )}
-          {featured && !bestSeller && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-card px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary shadow-sm">
-              <Sparkles className="h-3 w-3" aria-hidden="true" />
-              Featured
-            </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">
@@ -107,8 +72,6 @@ export function RecommendationCard({ item }: { item: RankedProduct }) {
             </span>
           )}
         </div>
-
-        <StarRating rating={rating} reviewCount={reviewCount} />
 
         <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{benefit}</p>
 

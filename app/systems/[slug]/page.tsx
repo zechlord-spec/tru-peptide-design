@@ -17,7 +17,8 @@ import { SystemRecommendations } from '@/components/systems/system-recommendatio
 import { getDataSource } from '@/lib/data'
 import { iconFor } from '@/lib/icons'
 
-// Recommendations read admin overrides from the database at request time.
+// Recommendations come from the active data source at request time (bundled
+// reference catalog by default, or a backend when NEXT_PUBLIC_API_URL is set).
 export const dynamic = 'force-dynamic'
 
 export async function generateStaticParams() {
@@ -210,8 +211,8 @@ export default async function SystemPage({
                 Build your regimen
               </h2>
               <p className="mt-4 text-pretty text-lg leading-relaxed text-muted-foreground">
-                Every product tagged for {system.name} is included below, ranked by popularity and
-                rating. Compare options and add what fits your goals.
+                Every product tagged for {system.name} is included below, grouped by how closely it
+                matches this system&apos;s focus. Compare options and add what fits your goals.
               </p>
             </div>
           </div>

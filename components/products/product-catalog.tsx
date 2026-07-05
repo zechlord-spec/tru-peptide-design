@@ -3,6 +3,8 @@
 import { useMemo, useState } from 'react'
 import { Search, SlidersHorizontal, X } from 'lucide-react'
 import type { Product } from '@/lib/data/types'
+import { useRetailSnapshot } from '@/lib/pricing/pricing-context'
+import { retailUnitFrom, type RetailSnapshot } from '@/lib/pricing/format'
 import { ProductCard } from './product-card'
 import { QuickViewModal } from './quick-view-modal'
 

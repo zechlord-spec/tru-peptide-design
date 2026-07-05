@@ -11,8 +11,7 @@ import 'server-only'
 import { PRODUCTS, getProduct, getRelatedProducts } from '@/lib/products-data'
 import { SYSTEMS, getSystem } from '@/lib/systems-data'
 import { GOALS } from '@/lib/goals-data'
-import { initialState, systemRecommendationsFrom } from '@/lib/catalog/engine'
-import { defaultSnapshot } from '@/lib/pricing/engine'
+import { getSystemRecommendations } from '@/lib/catalog/engine'
 import type { DataSource } from '../repositories'
 
 export const localDataSource: DataSource = {
@@ -36,10 +35,10 @@ export const localDataSource: DataSource = {
       return getSystem(slug) ?? null
     },
     async getRecommendations(slug) {
-      // Reference recommendations computed from the bundled catalog via the pure
-      // engine with an empty overlay (code-level defaults). A real backend
-      // returns admin-curated recommendations through the HTTP adapter.
-      return systemRecommendationsFrom(initialState(), slug)
+      // Reference recommendations computed from the bundled catalog and tag
+      // taxonomy. A real backend can return curated recommendations through the
+      // HTTP adapter.
+      return getSystemRecommendations(slug)
     },
   },
   goals: {
@@ -52,10 +51,12 @@ export const localDataSource: DataSource = {
   },
   pricing: {
     async getRetailSnapshot() {
-      // Reference retail prices derived from the bundled catalog via the pure
-      // pricing engine (default Smart Dynamic markup). A real backend replaces
-      // this with its live prices through the HTTP adapter.
-      return defaultSnapshot()
+      // Retail prices are owned by the backend, not the frontend. In reference
+      // mode there is no price source, so the snapshot is empty: the storefront
+      // renders neutral price placeholders and disables add-to-cart until a
+      // backend supplies live prices through the HTTP adapter
+      // (GET /pricing/snapshot → { [catNo]: number }).
+      return {}
     },
   },
 }
