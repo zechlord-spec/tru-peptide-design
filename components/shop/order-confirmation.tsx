@@ -30,7 +30,7 @@ export function OrderConfirmation({ orderId }: { orderId: string }) {
         <Package className="h-10 w-10 text-muted-foreground" />
         <h1 className="mt-4 font-heading text-2xl font-bold text-foreground">Order not found</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          We couldn&apos;t locate this order. It may have been placed on another device.
+          We couldn&apos;t locate this order. Sign in to view your order history.
         </p>
         <Link
           href="/account"

@@ -79,9 +79,6 @@ export function OrderDetail({ order, showTracker = false }: { order: Order; show
             <span className="font-heading text-sm font-semibold text-foreground">Total</span>
             <span className="font-heading text-lg font-bold text-primary">{money(order.total)}</span>
           </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Paid with card ending in {order.cardLast4}
-          </p>
         </div>
 
         <div className="rounded-3xl border border-border bg-card p-6">

@@ -16,6 +16,7 @@ import {
   Download,
   Trash2,
   User,
+  AlertCircle,
 } from 'lucide-react'
 import { useStore, money, type CoaDownload } from '@/lib/store'
 import { getProduct, type Product } from '@/lib/products-data'
@@ -367,12 +368,23 @@ function SettingsPanel() {
   const [org, setOrg] = useState(account?.org ?? '')
   const [phone, setPhone] = useState(account?.phone ?? '')
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  function handleSave(e: React.FormEvent) {
+  async function handleSave(e: React.FormEvent) {
     e.preventDefault()
-    updateAccount({ name: name.trim(), email: email.trim(), org: org.trim(), phone: phone.trim() })
-    setSaved(true)
-    window.setTimeout(() => setSaved(false), 2200)
+    setError(null)
+    try {
+      await updateAccount({
+        name: name.trim(),
+        email: email.trim(),
+        org: org.trim(),
+        phone: phone.trim(),
+      })
+      setSaved(true)
+      window.setTimeout(() => setSaved(false), 2200)
+    } catch {
+      setError('Saving profile requires a connected account backend.')
+    }
   }
 
   return (
@@ -390,11 +402,20 @@ function SettingsPanel() {
           <div className="flex items-start gap-3">
             <User className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
             <p className="text-xs leading-relaxed text-muted-foreground">
-              This is a demo account. Your details are stored locally on this device and are used to
-              pre-fill checkout. No password is required.
+              Your profile is managed by your account backend and used to pre-fill checkout.
             </p>
           </div>
         </div>
+
+        {error && (
+          <p
+            role="alert"
+            className="flex items-start gap-2 rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-xs leading-relaxed text-destructive"
+          >
+            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+            {error}
+          </p>
+        )}
 
         <button
           type="submit"

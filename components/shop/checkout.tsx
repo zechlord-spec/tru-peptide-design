@@ -2,14 +2,13 @@
 
 import { VialImage } from '@/components/products/vial-image'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check, ChevronLeft, Lock, CreditCard, Truck, Zap } from 'lucide-react'
-import { useStore, money, TAX_RATE, type Address } from '@/lib/store'
+import { Check, ChevronLeft, Lock, Truck, Zap, AlertCircle } from 'lucide-react'
+import { useStore, money, type Address } from '@/lib/store'
 import { Spinner } from '@/components/animations/loaders'
 
-type StepId = 'contact' | 'shipping' | 'delivery' | 'payment'
-const ORDER: StepId[] = ['contact', 'shipping', 'delivery', 'payment']
+type StepId = 'contact' | 'shipping' | 'delivery'
 
 const DELIVERY = [
   {
@@ -37,7 +36,6 @@ export function Checkout() {
     contact: false,
     shipping: false,
     delivery: false,
-    payment: false,
   })
 
   const [contact, setContact] = useState({
@@ -53,13 +51,14 @@ export function Checkout() {
     country: 'United States',
   })
   const [delivery, setDelivery] = useState<(typeof DELIVERY)[number]['id']>('standard')
-  const [card, setCard] = useState({ number: '', exp: '', cvc: '', name: '' })
   const [placing, setPlacing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
+  // Indicative shipping estimate only — the backend computes the authoritative
+  // shipping, tax and total at fulfillment.
   const shipping = DELIVERY.find((d) => d.id === delivery)?.price ?? 18
-  const effectiveShipping = subtotal >= 500 ? 0 : shipping
-  const tax = useMemo(() => Math.round(subtotal * TAX_RATE * 100) / 100, [subtotal])
-  const total = subtotal + effectiveShipping + tax
+  const estimatedShipping = subtotal >= 500 ? 0 : shipping
+  const selectedDelivery = DELIVERY.find((d) => d.id === delivery)
 
   function markDone(step: StepId, next?: StepId) {
     setCompleted((c) => ({ ...c, [step]: true }))
@@ -67,15 +66,15 @@ export function Checkout() {
   }
 
   const contactValid = /\S+@\S+\.\S+/.test(contact.email) && contact.fullName.trim().length > 1
-  const shippingValid =
-    addr.address.trim() && addr.city.trim() && addr.state.trim() && addr.zip.trim()
-  const cardDigits = card.number.replace(/\s/g, '')
-  const paymentValid =
-    cardDigits.length >= 15 && card.exp.length >= 4 && card.cvc.length >= 3 && card.name.trim()
+  const shippingValid = Boolean(
+    addr.address.trim() && addr.city.trim() && addr.state.trim() && addr.zip.trim(),
+  )
+  const canPlace = contactValid && shippingValid
 
   async function handlePlaceOrder() {
-    if (!paymentValid) return
+    if (!canPlace) return
     setPlacing(true)
+    setError(null)
     const fullAddress: Address = {
       fullName: contact.fullName,
       email: contact.email,
@@ -86,18 +85,22 @@ export function Checkout() {
       zip: addr.zip,
       country: addr.country,
     }
-    // Simulate processing
-    await new Promise((r) => setTimeout(r, 1100))
-    const order = placeOrder({
-      items,
-      subtotal,
-      shipping: effectiveShipping,
-      tax,
-      total,
-      address: fullAddress,
-      cardLast4: cardDigits.slice(-4),
-    })
-    router.push(`/order/${order.id}`)
+    try {
+      // Hand the order draft to the backend, which owns fulfillment, payment
+      // capture and final pricing, then returns the authoritative order.
+      const order = await placeOrder({
+        items,
+        subtotal,
+        address: fullAddress,
+        deliveryMethod: selectedDelivery?.label ?? delivery,
+      })
+      router.push(`/order/${order.id}`)
+    } catch {
+      setPlacing(false)
+      setError(
+        'Checkout isn’t connected to an order backend yet. Connect one to complete your purchase.',
+      )
+    }
   }
 
   if (items.length === 0) {
@@ -215,7 +218,7 @@ export function Checkout() {
             done={completed.delivery}
             summary={
               DELIVERY.find((d) => d.id === delivery)?.label +
-              ` · ${effectiveShipping === 0 ? 'Free' : money(effectiveShipping)}`
+              ` · ${estimatedShipping === 0 ? 'Free' : money(estimatedShipping)}`
             }
             onEdit={() => setCurrent('delivery')}
           >
@@ -254,55 +257,14 @@ export function Checkout() {
                 )
               })}
             </div>
-            <ContinueButton disabled={false} onClick={() => markDone('delivery', 'payment')} />
+            <ContinueButton disabled={false} onClick={() => markDone('delivery')} />
           </StepSection>
 
-          {/* Payment */}
-          <StepSection
-            index={4}
-            title="Payment"
-            active={current === 'payment'}
-            done={completed.payment}
-            summary={cardDigits ? `Card ending in ${cardDigits.slice(-4)}` : ''}
-            onEdit={() => setCurrent('payment')}
-          >
-            <div className="grid gap-4">
-              <Field
-                label="Card number"
-                value={card.number}
-                onChange={(v) => setCard((c) => ({ ...c, number: formatCard(v) }))}
-                placeholder="1234 5678 9012 3456"
-                inputMode="numeric"
-                icon={<CreditCard className="h-4 w-4 text-muted-foreground" />}
-              />
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field
-                  label="Expiration (MM/YY)"
-                  value={card.exp}
-                  onChange={(v) => setCard((c) => ({ ...c, exp: formatExp(v) }))}
-                  placeholder="MM/YY"
-                  inputMode="numeric"
-                />
-                <Field
-                  label="CVC"
-                  value={card.cvc}
-                  onChange={(v) => setCard((c) => ({ ...c, cvc: v.replace(/\D/g, '').slice(0, 4) }))}
-                  placeholder="123"
-                  inputMode="numeric"
-                />
-              </div>
-              <Field
-                label="Name on card"
-                value={card.name}
-                onChange={(v) => setCard((c) => ({ ...c, name: v }))}
-                placeholder="Jane Researcher"
-                autoComplete="cc-name"
-              />
-            </div>
-            <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Lock className="h-3.5 w-3.5" /> This is a demo store. Do not enter real card details.
-            </p>
-          </StepSection>
+          <p className="flex items-center gap-2 rounded-2xl border border-border bg-secondary/50 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+            <Lock className="h-3.5 w-3.5 flex-shrink-0" />
+            Payment is collected securely by the store at fulfillment. No card details are entered
+            or stored in this checkout.
+          </p>
         </div>
       </div>
 
@@ -342,29 +304,43 @@ export function Checkout() {
             <div className="mt-5 space-y-2 border-t border-border pt-5 text-sm">
               <Row label="Subtotal" value={money(subtotal)} />
               <Row
-                label="Shipping"
-                value={effectiveShipping === 0 ? 'Free' : money(effectiveShipping)}
+                label="Shipping (est.)"
+                value={estimatedShipping === 0 ? 'Free' : money(estimatedShipping)}
               />
-              <Row label="Estimated tax" value={money(tax)} />
             </div>
             <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-              <span className="font-heading text-base font-semibold text-foreground">Total</span>
-              <span className="font-heading text-xl font-bold text-primary">{money(total)}</span>
+              <span className="font-heading text-base font-semibold text-foreground">
+                Subtotal
+              </span>
+              <span className="font-heading text-xl font-bold text-primary">{money(subtotal)}</span>
             </div>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              Shipping and tax are calculated and confirmed at fulfillment.
+            </p>
+
+            {error && (
+              <p
+                role="alert"
+                className="mt-4 flex items-start gap-2 rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-xs leading-relaxed text-destructive"
+              >
+                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                {error}
+              </p>
+            )}
 
             <button
               type="button"
               onClick={handlePlaceOrder}
-              disabled={!paymentValid || placing}
+              disabled={!canPlace || placing}
               className="btn-premium mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {placing ? (
                 <>
                   <Spinner size={18} />
-                  Processing…
+                  Placing order…
                 </>
               ) : (
-                `Place Order · ${money(total)}`
+                'Place Order'
               )}
             </button>
             <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground">
@@ -490,17 +466,4 @@ function Row({ label, value }: { label: string; value: string }) {
       <span className="font-medium text-foreground">{value}</span>
     </div>
   )
-}
-
-/* ----------------------------- Formatters ----------------------------- */
-
-function formatCard(v: string): string {
-  const digits = v.replace(/\D/g, '').slice(0, 16)
-  return digits.replace(/(.{4})/g, '$1 ').trim()
-}
-
-function formatExp(v: string): string {
-  const digits = v.replace(/\D/g, '').slice(0, 4)
-  if (digits.length <= 2) return digits
-  return `${digits.slice(0, 2)}/${digits.slice(2)}`
 }

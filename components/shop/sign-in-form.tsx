@@ -1,12 +1,31 @@
 'use client'
 
 import { useState } from 'react'
-import { User } from 'lucide-react'
+import { AlertCircle, User } from 'lucide-react'
 
-export function SignInForm({ onSignIn }: { onSignIn: (name: string, email: string) => void }) {
+export function SignInForm({
+  onSignIn,
+}: {
+  onSignIn: (name: string, email: string) => Promise<void>
+}) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const valid = name.trim().length > 1 && /\S+@\S+\.\S+/.test(email)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!valid || submitting) return
+    setSubmitting(true)
+    setError(null)
+    try {
+      await onSignIn(name.trim(), email.trim())
+    } catch {
+      setSubmitting(false)
+      setError('Accounts aren’t connected to a backend yet. Connect one to sign in.')
+    }
+  }
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-6 py-12">
@@ -21,10 +40,7 @@ export function SignInForm({ onSignIn }: { onSignIn: (name: string, email: strin
       </div>
 
       <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          if (valid) onSignIn(name.trim(), email.trim())
-        }}
+        onSubmit={handleSubmit}
         className="mt-8 space-y-4 rounded-3xl border border-border bg-card p-6"
       >
         <label className="block">
@@ -48,15 +64,24 @@ export function SignInForm({ onSignIn }: { onSignIn: (name: string, email: strin
             className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/15"
           />
         </label>
+        {error && (
+          <p
+            role="alert"
+            className="flex items-start gap-2 rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-xs leading-relaxed text-destructive"
+          >
+            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+            {error}
+          </p>
+        )}
         <button
           type="submit"
-          disabled={!valid}
+          disabled={!valid || submitting}
           className="btn-premium w-full rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Continue
+          {submitting ? 'Signing in…' : 'Continue'}
         </button>
         <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
-          Demo account — no password required. Your data stays on this device.
+          Sign in to view your orders and account details.
         </p>
       </form>
     </div>

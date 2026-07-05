@@ -16,6 +16,7 @@ import type {
   CartItem,
   CoaDownload,
   Order,
+  OrderDraft,
   PurchaseType,
 } from '@/lib/store-types'
 
@@ -24,7 +25,7 @@ import type {
 // Re-exported for backward compatibility with existing consumers. The canonical
 // definitions now live in `lib/store-types.ts` so they can be shared with the
 // account backend boundary (`lib/client/account.ts`) without a circular import.
-export type { Account, Address, CartItem, CoaDownload, Order, PurchaseType }
+export type { Account, Address, CartItem, CoaDownload, Order, OrderDraft, PurchaseType }
 
 // AutoShip recurring-delivery discount (not a membership)
 export const AUTOSHIP_DISCOUNT = 0.15
@@ -44,14 +45,14 @@ type StoreState = {
   // age
   ageVerified: boolean
   verifyAge: () => void
-  // orders
+  // orders (backend-owned via the account seam)
   orders: Order[]
-  placeOrder: (o: Omit<Order, 'id' | 'createdAt' | 'status'>) => Order
-  // account
+  placeOrder: (draft: OrderDraft) => Promise<Order>
+  // account (backend-owned via the account seam)
   account: Account
-  signIn: (name: string, email: string) => void
+  signIn: (name: string, email: string) => Promise<void>
   signOut: () => void
-  updateAccount: (patch: Partial<NonNullable<Account>>) => void
+  updateAccount: (patch: Partial<NonNullable<Account>>) => Promise<void>
   // favorites (wishlist)
   favorites: string[]
   toggleFavorite: (slug: string) => void
@@ -70,12 +71,18 @@ type StoreState = {
 
 const StoreContext = createContext<StoreState | null>(null)
 
-// Only genuinely device-local UI state is stored here. All user-scoped data
-// (account, orders, favorites, saved, recently-viewed, COA downloads) is owned
-// by the AccountClient boundary so a backend can take it over transparently.
+// Device-local UI + personalization state lives here in localStorage: the cart,
+// age gate, and the shopper's personalization collections (favorites, saved,
+// recently-viewed, COA download history). These are intentionally client-only
+// and do not require a backend. Only the session/profile and order history are
+// backend-owned — those go through the AccountClient boundary.
 const KEYS = {
   cart: 'tru.cart',
   age: 'tru.age',
+  favorites: 'tru.favorites',
+  saved: 'tru.saved',
+  recentlyViewed: 'tru.recentlyViewed',
+  coaDownloads: 'tru.coaDownloads',
 }
 
 function load<T>(key: string, fallback: T): T {
@@ -110,10 +117,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const account_client = useMemo(() => getAccountClient(), [])
 
-  // Hydrate: cart + age from device-local storage; user data from AccountClient.
+  // Hydrate: cart, age and personalization from device-local storage; the
+  // session/profile + order history from the AccountClient boundary.
   useEffect(() => {
     setItems(load<CartItem[]>(KEYS.cart, []))
     setAgeVerified(load<boolean>(KEYS.age, false))
+    setFavorites(load<string[]>(KEYS.favorites, []))
+    setSaved(load<string[]>(KEYS.saved, []))
+    setRecentlyViewed(load<string[]>(KEYS.recentlyViewed, []))
+    setCoaDownloads(load<CoaDownload[]>(KEYS.coaDownloads, []))
     let active = true
     account_client
       .load()
@@ -121,10 +133,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (!active) return
         setOrders(snapshot.orders)
         setAccount(snapshot.account)
-        setFavorites(snapshot.favorites)
-        setSaved(snapshot.saved)
-        setRecentlyViewed(snapshot.recentlyViewed)
-        setCoaDownloads(snapshot.coaDownloads)
+      })
+      .catch(() => {
+        /* no backend configured — stay signed out with no orders */
       })
       .finally(() => {
         if (active) setHydrated(true)
@@ -134,25 +145,22 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
   }, [account_client])
 
-  // Persist device-local UI state directly.
+  // Persist device-local UI + personalization state directly to localStorage.
   useEffect(() => {
     if (hydrated) save(KEYS.cart, items)
   }, [items, hydrated])
-
-  // Persist user-scoped collections through the AccountClient boundary
-  // (reference impl writes localStorage; http impl syncs to the backend).
   useEffect(() => {
-    if (hydrated) void account_client.setFavorites(favorites)
-  }, [favorites, hydrated, account_client])
+    if (hydrated) save(KEYS.favorites, favorites)
+  }, [favorites, hydrated])
   useEffect(() => {
-    if (hydrated) void account_client.setSaved(saved)
-  }, [saved, hydrated, account_client])
+    if (hydrated) save(KEYS.saved, saved)
+  }, [saved, hydrated])
   useEffect(() => {
-    if (hydrated) void account_client.setRecentlyViewed(recentlyViewed)
-  }, [recentlyViewed, hydrated, account_client])
+    if (hydrated) save(KEYS.recentlyViewed, recentlyViewed)
+  }, [recentlyViewed, hydrated])
   useEffect(() => {
-    if (hydrated) void account_client.setCoaDownloads(coaDownloads)
-  }, [coaDownloads, hydrated, account_client])
+    if (hydrated) save(KEYS.coaDownloads, coaDownloads)
+  }, [coaDownloads, hydrated])
 
   const addItem = useCallback((item: Omit<CartItem, 'id'>) => {
     const type = item.purchaseType ?? 'onetime'
@@ -185,36 +193,22 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const placeOrder = useCallback(
-    (o: Omit<Order, 'id' | 'createdAt' | 'status'>) => {
-      // Optimistically build the order for instant UI, then delegate durable
-      // creation to the AccountClient (reference: localStorage; http: backend).
-      const order: Order = {
-        ...o,
-        id: `TRU-${Date.now().toString(36).toUpperCase()}`,
-        createdAt: Date.now(),
-        status: 'Processing',
-      }
+    async (draft: OrderDraft) => {
+      // The backend owns fulfillment: it assigns the id, status, shipping, tax
+      // and total, and returns the authoritative order. We never fabricate one.
+      const created = await account_client.placeOrder(draft)
+      setOrders((prev) => [created, ...prev])
       setItems([])
-      account_client
-        .placeOrder(o)
-        .then((created) => {
-          // Reconcile with the authoritative record from the client/backend.
-          setOrders((prev) => [created, ...prev.filter((x) => x.id !== order.id)])
-        })
-        .catch(() => {
-          // Keep the optimistic order visible if the boundary is unavailable.
-          setOrders((prev) => [order, ...prev])
-        })
-      setOrders((prev) => [order, ...prev])
-      return order
+      return created
     },
     [account_client],
   )
 
   const signIn = useCallback(
-    (name: string, email: string) => {
-      setAccount((prev) => ({ ...prev, name, email }))
-      void account_client.signIn(name, email)
+    async (name: string, email: string) => {
+      // The backend performs real auth and returns the session profile.
+      const account = await account_client.signIn(name, email)
+      setAccount(account)
     },
     [account_client],
   )
@@ -225,9 +219,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [account_client])
 
   const updateAccount = useCallback(
-    (patch: Partial<NonNullable<Account>>) => {
-      setAccount((prev) => (prev ? { ...prev, ...patch } : prev))
-      void account_client.updateProfile(patch)
+    async (patch: Partial<NonNullable<Account>>) => {
+      const account = await account_client.updateProfile(patch)
+      setAccount(account)
     },
     [account_client],
   )
@@ -305,8 +299,8 @@ export function useStore() {
 
 /* ----------------------------- Helpers ----------------------------- */
 
-export const SHIPPING_FLAT = 18
-export const TAX_RATE = 0.0725
+// NOTE: shipping and tax are computed by the backend at fulfillment, not here.
+// The frontend never fabricates checkout pricing.
 
 export function money(n: number): string {
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD' })

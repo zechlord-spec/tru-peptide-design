@@ -32,17 +32,25 @@ export type Address = {
   country: string
 }
 
-export type Order = {
-  id: string
-  createdAt: number
+// What the client submits when placing an order. Money beyond the cart subtotal
+// (shipping, tax) and identifiers/status are assigned by the backend, never the
+// frontend — so the exported layer contains no checkout pricing logic.
+export type OrderDraft = {
   items: CartItem[]
   subtotal: number
+  address: Address
+  deliveryMethod: string
+}
+
+export type OrderStatus = 'Processing' | 'Shipped' | 'Delivered'
+
+export type Order = OrderDraft & {
+  id: string
+  createdAt: number
+  status: OrderStatus
   shipping: number
   tax: number
   total: number
-  address: Address
-  cardLast4: string
-  status: 'Processing' | 'Shipped' | 'Delivered'
 }
 
 export type Account = {
