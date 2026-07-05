@@ -83,7 +83,7 @@ export function AnalyticsSection() {
             <CartesianGrid strokeDasharray="3 3" stroke="#d3bd9f" vertical={false} />
             <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#6b6355' }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fontSize: 12, fill: '#6b6355' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v / 1000}k`} />
-            <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => money(v)} />
+            <Tooltip contentStyle={tooltipStyle} formatter={(v) => money(Number(v))} />
             <Area type="monotone" dataKey="revenue" stroke={GOLD} strokeWidth={2.5} fill="url(#rev)" />
           </AreaChart>
         </ResponsiveContainer>
@@ -166,7 +166,7 @@ export function AnalyticsSection() {
                   <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v}%`} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v) => `${Number(v)}%`} />
               <Legend
                 verticalAlign="bottom"
                 iconType="circle"

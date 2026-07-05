@@ -1,14 +1,25 @@
-import { Plus } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowUpRight } from 'lucide-react'
+import { getDataSource } from '@/lib/data'
+import { getRetailSnapshot } from '@/lib/pricing/service'
+import { retailRangeFrom } from '@/lib/pricing/format'
 import { VialImage } from '@/components/products/vial-image'
 
-const PRODUCTS = [
-  { name: 'BPC-157', category: 'Recovery', price: '$89', purity: '99.9%' },
-  { name: 'TB-500', category: 'Repair', price: '$99', purity: '99.8%' },
-  { name: 'Ipamorelin', category: 'Vitality', price: '$79', purity: '99.9%' },
-  { name: 'CJC-1295', category: 'Performance', price: '$109', purity: '99.7%' },
-]
+/**
+ * Homepage "Featured Products" section.
+ *
+ * Server component that pulls real catalog products and live retail pricing
+ * from the data layer. New arrivals are prioritized, then the list is filled
+ * with additional catalog products so the section always shows four cards.
+ */
+export async function Products() {
+  const data = getDataSource()
+  const [products, snapshot] = await Promise.all([data.products.list(), getRetailSnapshot()])
 
-export function Products() {
+  const featured = [...products]
+    .sort((a, b) => Number(Boolean(b.isNew)) - Number(Boolean(a.isNew)))
+    .slice(0, 4)
+
   return (
     <section id="products" className="bg-card px-4 py-24">
       <div className="mx-auto max-w-7xl">
@@ -21,52 +32,50 @@ export function Products() {
               Explore the compound library
             </h2>
           </div>
-          <a
-            id="library"
-            href="#products"
+          <Link
+            href="/products"
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-accent"
           >
             Browse full library
-          </a>
+            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
         </div>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {PRODUCTS.map((product) => (
-            <article
-              key={product.name}
+          {featured.map((product) => (
+            <Link
+              key={product.slug}
+              href={`/products/${product.slug}`}
               className="group rounded-3xl border border-border/60 bg-background p-5 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_28px_56px_-28px_rgba(8,27,53,0.3)]"
             >
               <div className="relative aspect-square overflow-hidden rounded-2xl bg-secondary">
                 <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105">
                   <VialImage
                     name={product.name}
-                    catNo=""
+                    catNo={product.variants[0]?.catNo ?? ''}
                     sizes="(max-width: 768px) 50vw, 25vw"
                   />
                 </div>
                 <span className="absolute left-3 top-3 z-10 rounded-full bg-primary/5 px-2.5 py-1 text-[11px] font-semibold text-primary">
-                  {product.purity}
+                  99% Purity
                 </span>
               </div>
               <div className="mt-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.15em] text-accent">
                   {product.category}
                 </p>
-                <div className="mt-1.5 flex items-center justify-between">
+                <div className="mt-1.5 flex items-center justify-between gap-2">
                   <h3 className="font-heading text-lg font-bold text-primary">{product.name}</h3>
-                  <span className="font-heading text-lg font-bold text-primary">
-                    {product.price}
+                  <span className="whitespace-nowrap font-heading text-lg font-bold text-primary">
+                    {retailRangeFrom(snapshot, product)}
                   </span>
                 </div>
               </div>
-              <button
-                type="button"
-                className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-full border border-primary/20 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
-              >
-                <Plus className="h-4 w-4" />
-                Add to Cart
-              </button>
-            </article>
+              <span className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-full border border-primary/20 px-4 py-2.5 text-sm font-semibold text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                View Product
+                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              </span>
+            </Link>
           ))}
         </div>
       </div>

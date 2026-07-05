@@ -69,7 +69,7 @@ const FIRST = ['Jane', 'Marcus', 'Priya', 'Diego', 'Lena', 'Omar', 'Sofia', 'Eth
 const LAST = ['Chen', 'Okafor', 'Patel', 'Rivera', 'Novak', 'Haddad', 'Rossi', 'Brooks', 'Bello', 'Kim', 'Tanaka', 'Reid']
 const STATUSES: AdminOrderStatus[] = ['Processing', 'Shipped', 'Delivered', 'Delivered', 'Refunded']
 
-export const ORDERS: AdminOrder[] = Array.from({ length: 48 }, (_, i) => {
+export const ORDERS: AdminOrder[] = Array.from({ length: 48 }, (_, i): AdminOrder => {
   const fn = FIRST[Math.floor(seeded(i * 3 + 2) * FIRST.length)]
   const ln = LAST[Math.floor(seeded(i * 5 + 4) * LAST.length)]
   const items = 1 + Math.floor(seeded(i * 7 + 1) * 4)
@@ -124,7 +124,7 @@ export const CUSTOMERS: AdminCustomer[] = (() => {
     }
   })
   return Array.from(map.values())
-    .map((c) => ({
+    .map((c): AdminCustomer => ({
       ...c,
       tier: c.spent > 1500 ? 'Top' : c.orders > 1 ? 'Returning' : 'New',
     }))

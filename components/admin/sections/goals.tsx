@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Plus, Target, ExternalLink, Pencil } from 'lucide-react'
 import { GOALS } from '@/lib/goals-data'
+import { iconFor } from '@/lib/icons'
 import { SectionHeader, StatCard, Toolbar } from '@/components/admin/ui'
 
 export function GoalsSection() {
@@ -47,7 +48,7 @@ export function GoalsSection() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filtered.map((g) => {
-          const Icon = g.icon
+          const Icon = iconFor(g.iconKey)
           return (
             <div key={g.slug} className="flex flex-col rounded-2xl border border-border bg-card p-5">
               <div className="flex items-center gap-3">
