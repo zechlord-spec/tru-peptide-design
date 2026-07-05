@@ -1,35 +1,16 @@
-import type { LucideIcon } from 'lucide-react'
-import {
-  Scale,
-  Zap,
-  HeartPulse,
-  Hourglass,
-  Brain,
-  Sparkles,
-  Flame,
-  Activity,
-  Leaf,
-  ShieldCheck,
-  BatteryCharging,
-  Moon,
-} from 'lucide-react'
+// Local reference data for TRU Goals. This is the bundled data used by the
+// local data source (lib/data/local) when no backend is configured. The shape
+// is defined canonically in lib/data/types.ts and re-exported here for
+// backward-compatible imports.
+import type { Goal, GoalArticle, GoalProductRef, GoalSystemRef } from '@/lib/data/types'
 
-export type Goal = {
-  slug: string
-  name: string
-  icon: LucideIcon
-  tagline: string
-  summary: string
-  systems: { name: string; focus: string; compounds: string; price: string }[]
-  products: { name: string; type: string; price: string }[]
-  articles: { title: string; readTime: string; category: string }[]
-}
+export type { Goal, GoalArticle, GoalProductRef, GoalSystemRef }
 
 export const GOALS: Goal[] = [
   {
     slug: 'weight-management',
     name: 'Weight Management',
-    icon: Scale,
+    iconKey: 'Scale',
     tagline: 'Body composition & metabolic balance',
     summary:
       'Sustainable body composition is governed by metabolic signaling, appetite regulation, and insulin sensitivity. Research peptides in this category are studied for their roles in modulating satiety pathways, supporting lean mass retention, and optimizing how the body partitions energy.',
@@ -51,7 +32,7 @@ export const GOALS: Goal[] = [
   {
     slug: 'performance',
     name: 'Performance',
-    icon: Zap,
+    iconKey: 'Zap',
     tagline: 'Strength, output & training capacity',
     summary:
       'Athletic performance depends on the interplay of muscular output, oxygen delivery, and recovery velocity. Compounds studied here target growth hormone axis stimulation, mitochondrial efficiency, and neuromuscular signaling to support training adaptation.',
@@ -73,7 +54,7 @@ export const GOALS: Goal[] = [
   {
     slug: 'recovery',
     name: 'Recovery',
-    icon: HeartPulse,
+    iconKey: 'HeartPulse',
     tagline: 'Tissue repair & regeneration',
     summary:
       'Recovery is where adaptation happens. This category focuses on compounds researched for accelerating soft-tissue repair, modulating inflammation, and supporting the regeneration of tendons, ligaments, and muscle following stress.',
@@ -95,7 +76,7 @@ export const GOALS: Goal[] = [
   {
     slug: 'longevity',
     name: 'Longevity',
-    icon: Hourglass,
+    iconKey: 'Hourglass',
     tagline: 'Cellular health & lifespan',
     summary:
       'Longevity research centers on the hallmarks of aging — cellular senescence, mitochondrial decline, and telomere integrity. Compounds in this category are studied for supporting cellular resilience, autophagy, and systemic repair mechanisms.',
@@ -117,7 +98,7 @@ export const GOALS: Goal[] = [
   {
     slug: 'cognitive-performance',
     name: 'Cognitive Performance',
-    icon: Brain,
+    iconKey: 'Brain',
     tagline: 'Focus, memory & clarity',
     summary:
       'Cognitive function relies on neurotransmitter balance, neuroplasticity, and cerebral blood flow. This category explores compounds researched for supporting memory consolidation, focus, and neuroprotection under mental load.',
@@ -139,7 +120,7 @@ export const GOALS: Goal[] = [
   {
     slug: 'beauty-skin',
     name: 'Beauty & Skin',
-    icon: Sparkles,
+    iconKey: 'Sparkles',
     tagline: 'Collagen, glow & skin health',
     summary:
       'Skin vitality is driven by collagen synthesis, cellular turnover, and antioxidant defense. Compounds here are studied for supporting dermal structure, wound healing, and the visible markers of healthy, resilient skin.',
@@ -161,7 +142,7 @@ export const GOALS: Goal[] = [
   {
     slug: 'sexual-wellness',
     name: 'Sexual Wellness',
-    icon: Flame,
+    iconKey: 'Flame',
     tagline: 'Libido, vitality & function',
     summary:
       'Sexual wellness integrates hormonal balance, vascular health, and central nervous system signaling. This category examines compounds researched for supporting libido, arousal pathways, and overall vitality.',
@@ -183,7 +164,7 @@ export const GOALS: Goal[] = [
   {
     slug: 'hormonal-optimization',
     name: 'Hormonal Optimization',
-    icon: Activity,
+    iconKey: 'Activity',
     tagline: 'Endocrine balance & signaling',
     summary:
       'Hormones orchestrate nearly every physiological process. This category focuses on compounds studied for supporting the endocrine axis — stimulating natural hormone production, restoring signaling rhythms, and optimizing regulatory feedback loops.',
@@ -205,7 +186,7 @@ export const GOALS: Goal[] = [
   {
     slug: 'healthy-aging',
     name: 'Healthy Aging',
-    icon: Leaf,
+    iconKey: 'Leaf',
     tagline: 'Vitality across the decades',
     summary:
       'Healthy aging is about maintaining function, resilience, and quality of life over time. This category blends compounds researched for supporting muscle preservation, cognitive maintenance, and systemic repair as the body matures.',
@@ -227,7 +208,7 @@ export const GOALS: Goal[] = [
   {
     slug: 'immune-support',
     name: 'Immune Support',
-    icon: ShieldCheck,
+    iconKey: 'ShieldCheck',
     tagline: 'Defense & resilience',
     summary:
       'A resilient immune system balances defensive readiness with regulated response. This category studies compounds for supporting immune cell modulation, thymic function, and the body’s ability to respond to challenge without chronic inflammation.',
@@ -249,7 +230,7 @@ export const GOALS: Goal[] = [
   {
     slug: 'energy',
     name: 'Energy',
-    icon: BatteryCharging,
+    iconKey: 'BatteryCharging',
     tagline: 'Mitochondrial output & stamina',
     summary:
       'Cellular energy production is the foundation of vitality. This category explores compounds researched for supporting mitochondrial function, ATP production, and the metabolic efficiency that translates to sustained daily energy.',
@@ -271,7 +252,7 @@ export const GOALS: Goal[] = [
   {
     slug: 'sleep-stress',
     name: 'Sleep & Stress',
-    icon: Moon,
+    iconKey: 'Moon',
     tagline: 'Rest, recovery & calm',
     summary:
       'Quality sleep and stress regulation underpin every other health goal. This category focuses on compounds studied for supporting deep restorative sleep, HPA-axis balance, and a calm, resilient nervous system.',

@@ -1,54 +1,23 @@
-import type { LucideIcon } from 'lucide-react'
-import {
-  Sparkles,
-  Scale,
-  Dumbbell,
-  Brain,
-  Flame,
-  Hourglass,
-  HeartPulse,
-  Moon,
-  ShieldCheck,
-} from 'lucide-react'
+// Local reference data for TRU Systems. This is the bundled data used by the
+// local data source (lib/data/local) when no backend is configured. The shape
+// is defined canonically in lib/data/types.ts and re-exported here for
+// backward-compatible imports.
+import type {
+  System,
+  SystemArticle,
+  SystemCompound,
+  SystemFaq,
+  SystemOverviewPoint,
+  SystemResearch,
+} from '@/lib/data/types'
 
-export type SystemCompound = {
-  name: string
-  type: string
-  price: string
-}
-
-export type SystemArticle = {
-  title: string
-  readTime: string
-  category: string
-}
-
-export type SystemFaq = {
-  question: string
-  answer: string
-}
-
-export type SystemResearch = {
-  title: string
-  detail: string
-}
-
-export type System = {
-  slug: string
-  name: string
-  trademark: string
-  category: string
-  tagline: string
-  focusAreas: string[]
-  image: string
-  icon: LucideIcon
-  overview: string
-  overviewPoints: { title: string; detail: string }[]
-  research: SystemResearch[]
-  compounds: SystemCompound[]
-  library: SystemArticle[]
-  faqs: SystemFaq[]
-  related: string[]
+export type {
+  System,
+  SystemArticle,
+  SystemCompound,
+  SystemFaq,
+  SystemOverviewPoint,
+  SystemResearch,
 }
 
 export const SYSTEMS: System[] = [
@@ -60,7 +29,7 @@ export const SYSTEMS: System[] = [
     tagline: 'Radiance engineered from the cellular level',
     focusAreas: ['Beauty', 'Hair', 'Skin', 'Collagen', 'Cellular Rejuvenation'],
     image: '/systems/tru-glow.png',
-    icon: Sparkles,
+    iconKey: 'Sparkles',
     overview:
       'TRU GLOW™ is a curated research collection centered on the biology of visibly healthy skin, hair, and connective tissue. It brings together the compounds most studied for supporting collagen synthesis, dermal repair, and the cellular turnover that underpins a lasting, natural radiance.',
     overviewPoints: [
@@ -98,7 +67,7 @@ export const SYSTEMS: System[] = [
     tagline: 'Metabolic balance, backed by science',
     focusAreas: ['Weight Management', 'Metabolic Health', 'Body Composition'],
     image: '/systems/tru-klow.png',
-    icon: Scale,
+    iconKey: 'Scale',
     overview:
       'TRU KLOW™ focuses on the metabolic signaling that governs body composition. This collection gathers compounds studied for their roles in appetite regulation, energy partitioning, and the preservation of lean mass during metabolic change.',
     overviewPoints: [
@@ -136,7 +105,7 @@ export const SYSTEMS: System[] = [
     tagline: 'Engineered for output and adaptation',
     focusAreas: ['Athletic Performance', 'Strength', 'Endurance', 'Recovery'],
     image: '/systems/tru-perform.png',
-    icon: Dumbbell,
+    iconKey: 'Dumbbell',
     overview:
       'TRU PERFORM™ centers on the physiology of athletic output — the interplay of muscular strength, oxygen delivery, and recovery velocity. This collection studies compounds that target the growth hormone axis, mitochondrial efficiency, and neuromuscular signaling.',
     overviewPoints: [
@@ -174,7 +143,7 @@ export const SYSTEMS: System[] = [
     tagline: 'Clarity, memory, and neuroprotection',
     focusAreas: ['Brain Health', 'Memory', 'Concentration', 'Neuroprotection'],
     image: '/systems/tru-focus.png',
-    icon: Brain,
+    iconKey: 'Brain',
     overview:
       'TRU FOCUS™ explores the biology of cognition — neurotransmitter balance, neuroplasticity, and cerebral blood flow. This collection studies compounds researched for supporting memory consolidation, sustained focus, and neuroprotection under mental load.',
     overviewPoints: [
@@ -212,7 +181,7 @@ export const SYSTEMS: System[] = [
     tagline: 'Vitality through hormonal balance',
     focusAreas: ['Sexual Wellness', 'Hormonal Health', 'Nitric Oxide', 'Vitality'],
     image: '/systems/tru-vital.png',
-    icon: Flame,
+    iconKey: 'Flame',
     overview:
       'TRU VITAL™ integrates hormonal balance, vascular health, and central signaling. This collection studies compounds researched for supporting libido, endocrine rhythm, nitric oxide pathways, and the broad sense of vitality that comes from balanced physiology.',
     overviewPoints: [
@@ -250,7 +219,7 @@ export const SYSTEMS: System[] = [
     tagline: 'The science of aging well',
     focusAreas: ['Healthy Aging', 'Cellular Health', 'Mitochondrial Function'],
     image: '/systems/tru-longevity.png',
-    icon: Hourglass,
+    iconKey: 'Hourglass',
     overview:
       'TRU LONGEVITY™ centers on the hallmarks of aging — cellular senescence, mitochondrial decline, and telomere integrity. This collection gathers compounds studied for supporting cellular resilience, autophagy, and the systemic repair mechanisms that sustain vitality over time.',
     overviewPoints: [
@@ -288,7 +257,7 @@ export const SYSTEMS: System[] = [
     tagline: 'Repair, restore, regenerate',
     focusAreas: ['Injury Recovery', 'Inflammation', 'Tissue Repair'],
     image: '/systems/tru-recover.png',
-    icon: HeartPulse,
+    iconKey: 'HeartPulse',
     overview:
       'TRU RECOVER™ focuses on the biology of repair — the regeneration of tendons, ligaments, and muscle following stress or injury. This collection studies compounds researched for accelerating soft-tissue healing and modulating the inflammatory response.',
     overviewPoints: [
@@ -326,7 +295,7 @@ export const SYSTEMS: System[] = [
     tagline: 'Deep rest, calm resilience',
     focusAreas: ['Sleep', 'Stress', 'Relaxation'],
     image: '/systems/tru-rest.png',
-    icon: Moon,
+    iconKey: 'Moon',
     overview:
       'TRU REST™ addresses the foundations of restoration — deep sleep, HPA-axis balance, and a calm nervous system. This collection studies compounds researched for supporting sleep architecture and a resilient response to stress.',
     overviewPoints: [
@@ -364,7 +333,7 @@ export const SYSTEMS: System[] = [
     tagline: 'Resilient, regulated immunity',
     focusAreas: ['Immune Support', 'Cellular Protection'],
     image: '/systems/tru-defense.png',
-    icon: ShieldCheck,
+    iconKey: 'ShieldCheck',
     overview:
       'TRU DEFENSE™ studies the biology of immune resilience — the balance between defensive readiness and regulated response. This collection gathers compounds researched for supporting immune cell modulation, thymic function, and cellular protection.',
     overviewPoints: [

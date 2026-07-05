@@ -2,16 +2,13 @@
 
 import { useMemo, useState } from 'react'
 import { Search, SlidersHorizontal, X } from 'lucide-react'
-import {
-  PRODUCTS,
-  CATEGORIES,
-  COMPOUND_TYPES,
-  GOAL_OPTIONS,
-  SYSTEM_OPTIONS,
-  type Product,
-} from '@/lib/products-data'
+import type { Product } from '@/lib/data/types'
 import { ProductCard } from './product-card'
 import { QuickViewModal } from './quick-view-modal'
+
+function uniqueSorted(values: string[]): string[] {
+  return Array.from(new Set(values)).sort()
+}
 
 type SortKey = 'featured' | 'newest' | 'price-asc' | 'price-desc' | 'name'
 
