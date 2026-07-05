@@ -26,6 +26,8 @@ import 'server-only'
 //        → Goal[]             (each `iconKey` must be a key from lib/icons)
 //   GET  /goals/:slug
 //        → Goal               (404 if not found)
+//   GET  /pricing/snapshot
+//        → RetailSnapshot     ({ [catNo: string]: number } — per-vial USD)
 //
 // If your backend differs, adapt the paths below — this file is the only place
 // that knows about the wire format.
@@ -33,6 +35,7 @@ import 'server-only'
 
 import type { DataSource } from '../repositories'
 import type { Goal, Product, System, SystemRecommendations } from '../types'
+import type { RetailSnapshot } from '@/lib/pricing/format'
 
 class HttpError extends Error {
   constructor(
@@ -102,6 +105,11 @@ export function createHttpDataSource(baseUrl: string): DataSource {
       },
       getBySlug(slug) {
         return getOrNull<Goal>(`/goals/${encodeURIComponent(slug)}`)
+      },
+    },
+    pricing: {
+      getRetailSnapshot() {
+        return get<RetailSnapshot>('/pricing/snapshot')
       },
     },
   }

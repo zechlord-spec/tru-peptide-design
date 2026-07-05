@@ -8,6 +8,7 @@
 // in a custom `DataSource` implementation. No component changes required.
 
 import type { Goal, Product, System, SystemRecommendations } from './types'
+import type { RetailSnapshot } from '@/lib/pricing/format'
 
 export interface ProductRepository {
   /** All catalog products. */
@@ -37,9 +38,19 @@ export interface GoalRepository {
   getBySlug(slug: string): Promise<Goal | null>
 }
 
+export interface PricingRepository {
+  /**
+   * Client-safe `{ catNo -> per-vial retail price }` map used across the
+   * storefront (layout, product cards, detail pages). In reference mode this is
+   * derived from the bundled catalog; a real backend returns its live prices.
+   */
+  getRetailSnapshot(): Promise<RetailSnapshot>
+}
+
 /** The full storefront data surface. */
 export interface DataSource {
   products: ProductRepository
   systems: SystemRepository
   goals: GoalRepository
+  pricing: PricingRepository
 }

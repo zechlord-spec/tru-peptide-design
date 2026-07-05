@@ -1,4 +1,4 @@
-import type { PricingMode } from '@/lib/db/schema'
+import type { PricingMode } from '@/lib/pricing/types'
 import type { PricingStrategy } from './types'
 import { smartDynamicStrategy } from './smart-dynamic'
 import { fixedMarkupStrategy } from './fixed-markup'

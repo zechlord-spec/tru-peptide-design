@@ -1,4 +1,4 @@
-import type { PricingMode } from '@/lib/db/schema'
+import type { PricingMode } from '@/lib/pricing/types'
 
 /** Competitor market intelligence for a single variant (per vial, USD). */
 export type MarketData = {

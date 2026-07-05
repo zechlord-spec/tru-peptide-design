@@ -1,4 +1,4 @@
-import type { PricingMode } from '@/lib/db/schema'
+import type { PricingMode } from '@/lib/pricing/types'
 import { ceilToAttractive } from './rounding'
 import { getStrategy } from './strategies'
 import type { PricingContext } from './strategies/types'

@@ -12,6 +12,7 @@ import { PRODUCTS, getProduct, getRelatedProducts } from '@/lib/products-data'
 import { SYSTEMS, getSystem } from '@/lib/systems-data'
 import { GOALS } from '@/lib/goals-data'
 import { getSystemRecommendations } from '@/lib/catalog/recommendations'
+import { defaultSnapshot } from '@/lib/pricing/engine'
 import type { DataSource } from '../repositories'
 
 export const localDataSource: DataSource = {
@@ -44,6 +45,14 @@ export const localDataSource: DataSource = {
     },
     async getBySlug(slug) {
       return GOALS.find((goal) => goal.slug === slug) ?? null
+    },
+  },
+  pricing: {
+    async getRetailSnapshot() {
+      // Reference retail prices derived from the bundled catalog via the pure
+      // pricing engine (default Smart Dynamic markup). A real backend replaces
+      // this with its live prices through the HTTP adapter.
+      return defaultSnapshot()
     },
   },
 }
