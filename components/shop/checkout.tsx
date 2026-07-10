@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { Check, ChevronLeft, Lock, Truck, Zap, AlertCircle } from 'lucide-react'
 import { useStore, money, type Address } from '@/lib/store'
 import { Spinner } from '@/components/animations/loaders'
+import { RecommendedAddOnsSection } from '@/components/shop/recommended-add-ons'
 
 type StepId = 'contact' | 'shipping' | 'delivery'
 
@@ -260,6 +261,8 @@ export function Checkout() {
             <ContinueButton disabled={false} onClick={() => markDone('delivery')} />
           </StepSection>
 
+          <RecommendedAddOnsSection context="checkout" layout="grid" />
+
           <p className="flex items-center gap-2 rounded-2xl border border-border bg-secondary/50 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
             <Lock className="h-3.5 w-3.5 flex-shrink-0" />
             Payment is collected securely by the store at fulfillment. No card details are entered
@@ -283,7 +286,13 @@ export function Checkout() {
               {items.map((item) => (
                 <li key={item.id} className="flex gap-3">
                   <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl bg-secondary">
-                    <VialImage name={item.name} catNo={item.catNo} spec={item.spec} sizes="56px" />
+                    <VialImage
+                      name={item.name}
+                      catNo={item.catNo}
+                      spec={item.spec}
+                      photo={item.photo}
+                      sizes="56px"
+                    />
                     <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                       {item.qty}
                     </span>

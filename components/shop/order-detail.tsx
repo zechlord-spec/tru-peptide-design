@@ -44,7 +44,13 @@ export function OrderDetail({ order, showTracker = false }: { order: Order; show
           {order.items.map((item) => (
             <li key={item.id} className="flex gap-4 py-4">
               <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-secondary">
-                <VialImage name={item.name} catNo={item.catNo} spec={item.spec} sizes="64px" />
+                <VialImage
+                  name={item.name}
+                  catNo={item.catNo}
+                  spec={item.spec}
+                  photo={item.photo}
+                  sizes="64px"
+                />
               </div>
               <div className="flex flex-1 items-center justify-between gap-2">
                 <div>

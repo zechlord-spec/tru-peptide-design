@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { X, Minus, Plus, ShoppingBag, Trash2, Repeat } from 'lucide-react'
 import { useStore, money } from '@/lib/store'
 import { VialImage } from '@/components/products/vial-image'
+import { RecommendedAddOnsSection } from '@/components/shop/recommended-add-ons'
 
 function nextShipment(days: number): string {
   const d = new Date()
@@ -99,6 +100,7 @@ export function CartDrawer() {
                       name={item.name}
                       catNo={item.catNo}
                       spec={item.spec}
+                      photo={item.photo}
                       sizes="80px"
                     />
                   </div>
@@ -172,6 +174,10 @@ export function CartDrawer() {
                 </li>
               ))}
             </ul>
+
+            <div className="border-t border-border px-6 pt-5">
+              <RecommendedAddOnsSection context="cart" />
+            </div>
 
             <div className="border-t border-border px-6 py-5">
               <div className="flex items-center justify-between text-sm">

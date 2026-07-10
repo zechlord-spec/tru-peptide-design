@@ -20,6 +20,7 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { FaqAccordion } from '@/components/systems/faq-accordion'
 import { PurchasePanel } from '@/components/products/purchase-panel'
+import { RecommendedAddOnsSection } from '@/components/shop/recommended-add-ons'
 import { VialImage } from '@/components/products/vial-image'
 import { FavoriteButton } from '@/components/shop/favorite-button'
 import { ViewTracker } from '@/components/shop/view-tracker'
@@ -188,7 +189,14 @@ export default async function ProductPage({
             </div>
 
             {/* Right: premium purchase card */}
-            <PurchasePanel product={product} />
+            <div className="flex flex-col gap-4">
+              <PurchasePanel product={product} />
+              <RecommendedAddOnsSection
+                context="product"
+                title="Commonly Paired Items"
+                subtitle="Research support items that complete your setup."
+              />
+            </div>
           </div>
         </div>
       </section>

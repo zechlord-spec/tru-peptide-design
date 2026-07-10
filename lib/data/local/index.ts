@@ -56,7 +56,7 @@ export const localDataSource: DataSource = {
       // renders neutral price placeholders and disables add-to-cart until a
       // backend supplies live prices through the HTTP adapter
       // (GET /pricing/snapshot → { [catNo]: number }).
-      return {}
+      return { RT5: 189, BAC30: 19, PREP100: 12, CASE12: 29, NACL30: 16 }
     },
   },
 }

@@ -16,6 +16,12 @@ export type CartItem = {
   spec: string
   price: number // unit price already reflects AutoShip discount when applicable
   image: string
+  /**
+   * Optional real product photograph. Used by non-vial add-on accessories so the
+   * cart/checkout thumbnails show the actual item instead of the vial template.
+   * Undefined for peptides, which render via the shared VialImage template.
+   */
+  photo?: string
   qty: number
   purchaseType?: PurchaseType
   frequency?: number | null // delivery cadence in days (AutoShip only)
