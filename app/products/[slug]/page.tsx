@@ -189,14 +189,18 @@ export default async function ProductPage({
             </div>
 
             {/* Right: premium purchase card */}
-            <div className="flex flex-col gap-4">
-              <PurchasePanel product={product} />
-              <RecommendedAddOnsSection
-                context="product"
-                title="Commonly Paired Items"
-                subtitle="Research support items that complete your setup."
-              />
-            </div>
+            <PurchasePanel product={product} />
+          </div>
+
+          {/* Commonly paired items — full-width band so it never collides with
+              the sticky purchase card. */}
+          <div className="mt-10 lg:mt-14">
+            <RecommendedAddOnsSection
+              context="product"
+              layout="grid"
+              title="Commonly Paired Items"
+              subtitle="Research support items that complete your setup."
+            />
           </div>
         </div>
       </section>

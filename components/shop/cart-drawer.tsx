@@ -92,7 +92,8 @@ export function CartDrawer() {
           </div>
         ) : (
           <>
-            <ul className="flex-1 divide-y divide-border overflow-y-auto px-6">
+            <div className="flex-1 overflow-y-auto">
+            <ul className="divide-y divide-border px-6">
               {items.map((item) => (
                 <li key={item.id} className="flex gap-4 py-5">
                   <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-secondary">
@@ -175,8 +176,9 @@ export function CartDrawer() {
               ))}
             </ul>
 
-            <div className="border-t border-border px-6 pt-5">
-              <RecommendedAddOnsSection context="cart" />
+              <div className="mt-2 border-t border-border px-6 pt-5">
+                <RecommendedAddOnsSection context="cart" limit={2} />
+              </div>
             </div>
 
             <div className="border-t border-border px-6 py-5">

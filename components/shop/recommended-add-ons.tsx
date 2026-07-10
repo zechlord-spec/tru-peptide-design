@@ -25,12 +25,15 @@ export function RecommendedAddOnsSection({
   title = DEFAULT_TITLE,
   subtitle = DEFAULT_SUBTITLE,
   layout = 'list',
+  limit,
   className = '',
 }: {
   context: AddOnContext
   title?: string
   subtitle?: string
   layout?: 'list' | 'grid'
+  /** Max number of add-ons to show. Defaults to the data helper's cap. */
+  limit?: number
   className?: string
 }) {
   const { items } = useStore()
@@ -38,8 +41,8 @@ export function RecommendedAddOnsSection({
   // Duplicate rule: never recommend something already in the cart.
   const cartCatNos = useMemo(() => items.map((i) => i.catNo), [items])
   const addOns = useMemo(
-    () => getAddOns({ context, excludeCatNos: cartCatNos }),
-    [context, cartCatNos],
+    () => getAddOns({ context, excludeCatNos: cartCatNos, limit }),
+    [context, cartCatNos, limit],
   )
 
   // AutoShip flow: recurring add-ons are not supported, so we offer a one-time
@@ -142,7 +145,7 @@ export function AddOnProductCard({
           {addOn.shortDescription}
         </p>
 
-        <div className="mt-2 flex items-center justify-between gap-2">
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-x-2 gap-y-2">
           <span className="flex items-baseline gap-1.5">
             <span className="font-heading text-sm font-semibold text-primary">
               {hasPrice ? money(price) : '—'}
